@@ -1,14 +1,14 @@
 package com.testinprod.popularmovies;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MovieGrid extends ActionBarActivity {
+public class MovieGrid extends AppCompatActivity {
+    private static final String LOG_TAG = MovieGrid.class.getSimpleName();
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_grid);
