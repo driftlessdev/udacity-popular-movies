@@ -89,7 +89,18 @@ public class Movie implements Parcelable {
             throws JSONException
     {
         JSONObject movieJSON = new JSONObject(JsonString);
+        loadFromJSON(movieJSON);
+    }
 
+    public Movie(JSONObject movieJSON)
+            throws JSONException
+    {
+        loadFromJSON(movieJSON);
+    }
+
+    private void loadFromJSON(JSONObject movieJSON)
+            throws JSONException
+    {
         mId = movieJSON.getString(ID_FIELD);
         mOriginalTitle = movieJSON.getString(ORIGINAL_TITLE_FIELD);
         mOverview = movieJSON.getString(OVERVIEW_FIELD);
@@ -109,7 +120,6 @@ public class Movie implements Parcelable {
         mVoteCount = movieJSON.getInt(VOTE_COUNT_FIELD);
         mIsAdult = movieJSON.getBoolean(ADULT_FIELD);
         mBackdropPath = movieJSON.getString(BACKDROP_PATH_FIELD);
-
     }
 
     public boolean getIsAdult()
