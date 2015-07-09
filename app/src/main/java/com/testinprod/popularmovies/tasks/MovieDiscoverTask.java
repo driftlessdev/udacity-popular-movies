@@ -43,6 +43,7 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
         }
     }
 
+    // TODO: Pass in sorting
     protected ArrayList<Movie> doInBackground(String... params) {
         if(mCallback == null)
         {

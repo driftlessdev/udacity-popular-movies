@@ -2,4 +2,53 @@
     <string name="app_name">Popular Movies</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_sort_key" translatable="false">movie.sort</string>
+    <string name="pref_sort_default" translatable="false">@string/pref_sort_key_pop</string>
+
+    <string name="pref_sort_key_pop" translatable="false">popularity</string>
+    <string name="pref_sort_key_rel_date" translatable="false">release_date</string>
+    <string name="pref_sort_key_rev" translatable="false">revenue</string>
+    <string name="pref_sort_key_orig_rel_date" translatable="false">primary_release_date</string>
+    <string name="pref_sort_key_orig_title" translatable="false">original_title</string>
+    <string name="pref_sort_key_vote_avg" translatable="false">vote_average</string>
+    <string name="pref_sort_key_vote_cnt" translatable="false">vote_count</string>
+    <string name="pref_sort_title">Sort by</string>
+
+    <string name="pref_sort_dir_key">movie.sort.dir</string>
+    <string name="pref_sort_dir_key_desc">desc</string>
+    <string name="pref_sort_dir_key_asc">asc</string>
+    <string name="pref_sort_dir_default">@string/pref_sort_dir_key_desc</string>
+    <string name="pref_sort_dir_title">Direction</string>
+
+    <string name="pref_sort_sec_title">Movie Order</string>
+
+    <string-array name="pref_sort_dir_keys">
+        <item>@string/pref_sort_dir_key_desc</item>
+        <item>@string/pref_sort_dir_key_asc</item>
+    </string-array>
+    <string-array name="pref_sort_dir_values">
+        <item>Descending</item>
+        <item>Ascending</item>
+    </string-array>
+
+    <string-array name="pref_sort_keys">
+        <item>@string/pref_sort_key_pop</item>
+        <item>@string/pref_sort_key_rel_date</item>
+        <item>@string/pref_sort_key_rev</item>
+        <item>@string/pref_sort_key_orig_rel_date</item>
+        <item>@string/pref_sort_key_orig_title</item>
+        <item>@string/pref_sort_key_vote_avg</item>
+        <item>@string/pref_sort_key_vote_cnt</item>
+    </string-array>
+
+    <string-array name="pref_sort_text">
+        <item>Popularity</item>
+        <item>Release Date</item>
+        <item>Revenue</item>
+        <item>Primary Release Date</item>
+        <item>Original Title</item>
+        <item>Vote Average</item>
+        <item>Vote Count</item>
+    </string-array>
 </resources>
