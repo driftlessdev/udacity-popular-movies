@@ -1,17 +1,136 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.testinprod.popularmovies.fragments.MovieDetailFragment">
+    
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/primary"
+        android:id="@+id/cvDetailHeader"
+        card_view:cardElevation="8dp"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/ivMovieHeader"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"/>
+    </android.support.v7.widget.CardView>
 
-    <TextView
-        android:id="@+id/tvTemp"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_below="@id/cvDetailHeader"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardElevation="2dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Idea from http://stackoverflow.com/questions/19983335/android-2-relative-layout-divided-in-half-screen -->
+                <View
+                    android:id="@+id/centerShim"
+                    android:layout_height="0dp"
+                    android:layout_width="0dp"
+                    android:visibility="invisible"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:id="@+id/tvReleaseTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/centerShim"
+                    android:layout_toStartOf="@id/centerShim"
+                    android:textColor="@color/secondary_text"
+                    android:text="@string/released_title"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvRatingTitle"
+                    android:layout_toRightOf="@id/centerShim"
+                    android:layout_toEndOf="@id/centerShim"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text"
+                    android:text="@string/rating_title"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tvReleaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/centerShim"
+                    android:layout_toStartOf="@id/centerShim"
+                    android:layout_below="@id/tvReleaseTitle"
+                    android:textColor="@color/primary_text"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/tvRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvRatingTitle"
+                    android:layout_toRightOf="@id/centerShim"
+                    android:layout_toEndOf="@id/centerShim"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/primary_text"
+                    android:gravity="center"
+                    />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardElevation="2dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            >
+
+            <TextView
+                android:id="@+id/tvOverview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_text"
+                android:padding="16dp"/>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+
+
+
+
 
 </RelativeLayout>

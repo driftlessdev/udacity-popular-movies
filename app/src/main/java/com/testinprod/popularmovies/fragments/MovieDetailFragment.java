@@ -1,20 +1,41 @@
 package com.testinprod.popularmovies.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.models.Movie;
+
+import java.text.SimpleDateFormat;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailFragment extends Fragment {
+    private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
+    private CardView mHeader;
+    private ImageView mPoster;
+    private ActionBar mBar;
+    private Movie mMovie;
 
     public static MovieDetailFragment newInstance(Movie movie)
     {
@@ -33,11 +54,89 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-        Bundle args = getArguments();
-        Movie movie = args.getParcelable(Movie.EXTRA_MOVIE);
-        TextView temp = (TextView) rootView.findViewById(R.id.tvTemp);
-        temp.setText(movie.getTitle() + " [" + movie.getID() + "]");
+        mHeader = (CardView) rootView.findViewById(R.id.cvDetailHeader);
 
+        Bundle args = getArguments();
+        mMovie = args.getParcelable(Movie.EXTRA_MOVIE);
+
+        TextView overview = (TextView) rootView.findViewById(R.id.tvOverview);
+        overview.setText(mMovie.getOverview());
+
+        mBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(mBar != null)
+        {
+            mBar.setTitle(mMovie.getTitle());
+            mBar.setElevation(0);
+        }
+
+
+        mPoster = (ImageView) rootView.findViewById(R.id.ivMovieHeader);
+        Picasso.with(getActivity())
+                .load(mMovie.getPosterPath())
+                .into(mPoster, new ImageLoadedCallback());
+
+        TextView rating = (TextView) rootView.findViewById(R.id.tvRating);
+        rating.setText(mMovie.getVoteAverage() + "/10");
+
+        TextView release = (TextView) rootView.findViewById(R.id.tvReleaseDate);
+        release.setText(SimpleDateFormat.getDateInstance().format(mMovie.getReleaseDate()));
         return rootView;
+    }
+
+    private class ImageLoadedCallback implements Callback
+    {
+        @Override
+        public void onSuccess() {
+            Log.v(LOG_TAG, "Image Loaded, extracting colors");
+            Bitmap bitmap = ((BitmapDrawable) mPoster.getDrawable()).getBitmap();
+            Palette.from(bitmap)
+                    .generate(new PosterPaletteListener());
+        }
+
+        @Override
+        public void onError() {
+
+        }
+    }
+
+    private class PosterPaletteListener implements Palette.PaletteAsyncListener
+    {
+        @Override
+        public void onGenerated(Palette palette) {
+            Palette.Swatch swatch = palette.getVibrantSwatch();
+            int textColor;
+            int bgColor;
+            // No vibrant, inconceivable!
+            if(swatch == null) {
+                Log.v(LOG_TAG, "Falling back to Muted");
+                swatch = palette.getMutedSwatch();
+            }
+            if(swatch != null)
+            {
+                textColor = swatch.getTitleTextColor();
+                bgColor = swatch.getRgb();
+            }
+            else
+            {
+                Log.v(LOG_TAG, "Falling back to default colors");
+                textColor = R.color.primary_text;
+                bgColor = R.color.primary;
+            }
+
+            mHeader.setBackgroundColor(bgColor);
+            if(mBar != null)
+            {
+                mBar.setBackgroundDrawable(new ColorDrawable(bgColor));
+
+                // Kudos to http://stackoverflow.com/questions/9920277/how-to-change-action-bar-title-color-in-code
+                SpannableString title = new SpannableString(mMovie.getTitle());
+                title.setSpan(new ForegroundColorSpan(textColor), 0, title.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            }
+            else
+            {
+                Log.v(LOG_TAG, "ActionBar not found");
+            }
+
+        }
     }
 }

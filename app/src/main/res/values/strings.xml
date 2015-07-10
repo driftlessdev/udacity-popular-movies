@@ -52,4 +52,6 @@
         <item>Vote Count</item>
     </string-array>
     <string name="title_activity_movie_detail">Movie Details</string>
+    <string name="released_title">Released</string>
+    <string name="rating_title">Rating</string>
 </resources>
