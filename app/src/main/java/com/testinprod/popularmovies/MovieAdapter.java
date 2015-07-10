@@ -1,7 +1,6 @@
 package com.testinprod.popularmovies;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.models.MovieModel;
-import com.testinprod.popularmovies.models.MovieParcel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Tim on 7/8/2015.

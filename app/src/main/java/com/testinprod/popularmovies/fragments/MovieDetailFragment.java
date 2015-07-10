@@ -22,9 +22,13 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
-import com.testinprod.popularmovies.models.MovieParcel;
+import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.models.MovieModel;
+
+import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -35,13 +39,13 @@ public class MovieDetailFragment extends Fragment {
     private CardView mHeader;
     private ImageView mPoster;
     private ActionBar mBar;
-    private MovieParcel mMovie;
+    private MovieModel mMovie;
 
-    public static MovieDetailFragment newInstance(MovieParcel movie)
+    public static MovieDetailFragment newInstance(MovieModel movie)
     {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(MovieParcel.EXTRA_MOVIE, movie);
+        args.putParcelable(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +61,7 @@ public class MovieDetailFragment extends Fragment {
         mHeader = (CardView) rootView.findViewById(R.id.cvDetailHeader);
 
         Bundle args = getArguments();
-        mMovie = args.getParcelable(MovieParcel.EXTRA_MOVIE);
+        mMovie = Parcels.unwrap(args.getParcelable(TheMovieDBConsts.EXTRA_MOVIE));
 
         TextView overview = (TextView) rootView.findViewById(R.id.tvOverview);
         overview.setText(mMovie.getOverview());
@@ -76,7 +80,7 @@ public class MovieDetailFragment extends Fragment {
         if(!path.isEmpty())
         {
             Picasso.with(getActivity())
-                    .load(path)
+                    .load(TheMovieDBConsts.POSTER_BASE_URL + path)
                     .into(mPoster, new ImageLoadedCallback());
         }
 
@@ -85,7 +89,14 @@ public class MovieDetailFragment extends Fragment {
         rating.setText(mMovie.getVoteAverage() + "/10");
 
         TextView release = (TextView) rootView.findViewById(R.id.tvReleaseDate);
-        release.setText(SimpleDateFormat.getDateInstance().format(mMovie.getReleaseDate()));
+        Date releaseDate = mMovie.getReleaseDateClass();
+
+        String dateText = "Unknown";
+        if(releaseDate != null)
+        {
+            dateText = SimpleDateFormat.getDateInstance().format(releaseDate);
+        }
+        release.setText(dateText);
         return rootView;
     }
 

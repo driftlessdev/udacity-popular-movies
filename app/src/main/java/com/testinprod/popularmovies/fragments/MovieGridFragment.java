@@ -19,13 +19,10 @@ import com.testinprod.popularmovies.api.TheMovieDBApi;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.models.MovieDiscovery;
 import com.testinprod.popularmovies.models.MovieModel;
-import com.testinprod.popularmovies.models.MovieParcel;
-import com.testinprod.popularmovies.tasks.MovieDiscoverTask;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -36,7 +33,7 @@ import retrofit.client.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieGridFragment extends Fragment implements MovieDiscoverTask.MovieDiscoverTaskResults, Callback<MovieDiscovery> {
+public class MovieGridFragment extends Fragment implements Callback<MovieDiscovery> {
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private static final String MOVIE_LIST = "movies.list";
 
@@ -51,7 +48,6 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         {
             movieModels = new ArrayList<>();
         }
-        Log.v(LOG_TAG, "returned movie count: " + movieDiscovery.getResults().size());
         mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movieModels));
     }
 
@@ -64,11 +60,6 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
     private GridView mMovieGrid;
     private String mSortKey;
     private TheMovieDBApi mMovieDBApi;
-
-    @Override
-    public void handleMovieDiscoverResults(ArrayList<MovieParcel> movies) {
-        //mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movies));
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -115,7 +106,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
                 MovieModel movie = (MovieModel) mMovieGrid.getItemAtPosition(position);
                 Intent details = new Intent(getActivity(), MovieDetailActivity.class);
                 details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
-                //startActivity(details);
+                startActivity(details);
             }
         });
 
@@ -135,12 +126,8 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         }
         mSortKey = sortKey;
 
-        //MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
-        //popularTask.execute(sortKey);
-
         if( mMovieDBApi == null) {
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setLogLevel(RestAdapter.LogLevel.FULL)
                     .setEndpoint(TheMovieDBConsts.API_URL)
                     .build();
 
