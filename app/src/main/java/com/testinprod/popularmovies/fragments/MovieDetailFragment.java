@@ -69,11 +69,17 @@ public class MovieDetailFragment extends Fragment {
             mBar.setElevation(0);
         }
 
+        setDefaultHeaderColors();
 
         mPoster = (ImageView) rootView.findViewById(R.id.ivMovieHeader);
-        Picasso.with(getActivity())
-                .load(mMovie.getPosterPath())
-                .into(mPoster, new ImageLoadedCallback());
+        String path = mMovie.getPosterPath();
+        if(!path.isEmpty())
+        {
+            Picasso.with(getActivity())
+                    .load(path)
+                    .into(mPoster, new ImageLoadedCallback());
+        }
+
 
         TextView rating = (TextView) rootView.findViewById(R.id.tvRating);
         rating.setText(mMovie.getVoteAverage() + "/10");
@@ -81,6 +87,29 @@ public class MovieDetailFragment extends Fragment {
         TextView release = (TextView) rootView.findViewById(R.id.tvReleaseDate);
         release.setText(SimpleDateFormat.getDateInstance().format(mMovie.getReleaseDate()));
         return rootView;
+    }
+
+    private void setDefaultHeaderColors()
+    {
+        setHeaderColors(R.color.primary, R.color.primary_text);
+    }
+
+    private void setHeaderColors(int backgroundColor, int textColor)
+    {
+        mHeader.setBackgroundColor(backgroundColor);
+        if(mBar != null)
+        {
+            mBar.setBackgroundDrawable(new ColorDrawable(backgroundColor));
+
+            // Kudos to http://stackoverflow.com/questions/9920277/how-to-change-action-bar-title-color-in-code
+            SpannableString title = new SpannableString(mMovie.getTitle());
+            title.setSpan(new ForegroundColorSpan(textColor), 0, title.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            mBar.setTitle(title);
+        }
+        else
+        {
+            Log.v(LOG_TAG, "ActionBar not found");
+        }
     }
 
     private class ImageLoadedCallback implements Callback
@@ -95,7 +124,7 @@ public class MovieDetailFragment extends Fragment {
 
         @Override
         public void onError() {
-
+            setDefaultHeaderColors();
         }
     }
 
@@ -119,24 +148,14 @@ public class MovieDetailFragment extends Fragment {
             else
             {
                 Log.v(LOG_TAG, "Falling back to default colors");
-                textColor = R.color.primary_text;
-                bgColor = R.color.primary;
+                setDefaultHeaderColors();
+                return;
             }
 
-            mHeader.setBackgroundColor(bgColor);
-            if(mBar != null)
-            {
-                mBar.setBackgroundDrawable(new ColorDrawable(bgColor));
-
-                // Kudos to http://stackoverflow.com/questions/9920277/how-to-change-action-bar-title-color-in-code
-                SpannableString title = new SpannableString(mMovie.getTitle());
-                title.setSpan(new ForegroundColorSpan(textColor), 0, title.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            }
-            else
-            {
-                Log.v(LOG_TAG, "ActionBar not found");
-            }
+            setHeaderColors(bgColor, textColor);
 
         }
     }
+
+
 }
