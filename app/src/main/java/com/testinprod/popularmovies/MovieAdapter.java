@@ -39,6 +39,11 @@ public class MovieAdapter extends BaseAdapter {
         return position;
     }
 
+    public ArrayList<Movie> getMovies()
+    {
+        return mMovies;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView movieThumb;
