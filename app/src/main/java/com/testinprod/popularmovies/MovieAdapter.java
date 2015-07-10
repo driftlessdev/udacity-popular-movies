@@ -1,6 +1,7 @@
 package com.testinprod.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,30 +9,34 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.models.MovieModel;
 import com.testinprod.popularmovies.models.MovieParcel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Tim on 7/8/2015.
  */
 public class MovieAdapter extends BaseAdapter {
+    private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
     private Context mContext;
-    private ArrayList<MovieParcel> mMovies;
+    private ArrayList<MovieModel> mMovieModels;
 
-    public MovieAdapter(Context context, ArrayList<MovieParcel> movies)
+    public MovieAdapter(Context context, ArrayList<MovieModel> movies)
     {
         mContext = context;
-        mMovies = movies;
+        mMovieModels = movies;
     }
     @Override
     public int getCount() {
-        return mMovies.size();
+        return mMovieModels.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mMovies.get(position);
+        return mMovieModels.get(position);
     }
 
     @Override
@@ -39,9 +44,9 @@ public class MovieAdapter extends BaseAdapter {
         return position;
     }
 
-    public ArrayList<MovieParcel> getMovies()
+    public ArrayList<MovieModel> getMovies()
     {
-        return mMovies;
+        return mMovieModels;
     }
 
     @Override
@@ -57,8 +62,14 @@ public class MovieAdapter extends BaseAdapter {
             movieThumb = (ImageView) convertView;
         }
 
-        //Picasso.with(parent.getContext()).load(artist.images.get(0).url).into(artistImage);
-        Picasso.with(mContext).load(mMovies.get(position).getPosterPath()).into(movieThumb);
+        String posterURL = mMovieModels.get(position).getPosterPath();
+        if(!posterURL.isEmpty())
+        {
+            Picasso.with(mContext)
+                    .load(TheMovieDBConsts.POSTER_BASE_URL + posterURL)
+                    .into(movieThumb);
+        }
+
         return movieThumb;
     }
 }

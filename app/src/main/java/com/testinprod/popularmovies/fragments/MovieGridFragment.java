@@ -15,25 +15,59 @@ import android.widget.GridView;
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.activities.MovieDetailActivity;
+import com.testinprod.popularmovies.api.TheMovieDBApi;
+import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.models.MovieDiscovery;
+import com.testinprod.popularmovies.models.MovieModel;
 import com.testinprod.popularmovies.models.MovieParcel;
 import com.testinprod.popularmovies.tasks.MovieDiscoverTask;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieGridFragment extends Fragment implements MovieDiscoverTask.MovieDiscoverTaskResults{
+public class MovieGridFragment extends Fragment implements MovieDiscoverTask.MovieDiscoverTaskResults, Callback<MovieDiscovery> {
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private static final String MOVIE_LIST = "movies.list";
+
+    @Override
+    public void success(MovieDiscovery movieDiscovery, Response response) {
+        ArrayList<MovieModel> movieModels = null;
+        if(movieDiscovery != null)
+        {
+            movieModels = new ArrayList<>(movieDiscovery.getResults());
+        }
+        if(movieModels == null)
+        {
+            movieModels = new ArrayList<>();
+        }
+        Log.v(LOG_TAG, "returned movie count: " + movieDiscovery.getResults().size());
+        mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movieModels));
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+
+    }
+
     private static final String MOVIE_SORT = "movies.sort";
     private GridView mMovieGrid;
     private String mSortKey;
+    private TheMovieDBApi mMovieDBApi;
 
     @Override
     public void handleMovieDiscoverResults(ArrayList<MovieParcel> movies) {
-        mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movies));
+        //mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movies));
     }
 
     @Override
@@ -41,7 +75,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         super.onSaveInstanceState(outState);
         outState.putString(MOVIE_SORT, mSortKey);
         MovieAdapter adapter = (MovieAdapter) mMovieGrid.getAdapter();
-        outState.putParcelableArrayList(MOVIE_LIST, adapter.getMovies());
+        outState.putParcelable(MOVIE_LIST, Parcels.wrap(adapter.getMovies()));
     }
 
     public MovieGridFragment() {
@@ -65,7 +99,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         if(savedInstanceState != null)
         {
             Log.v(LOG_TAG, "Restoring state");
-            ArrayList<MovieParcel> movies =  savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+            ArrayList<MovieModel> movies = Parcels.unwrap(savedInstanceState.getParcelable(MOVIE_LIST));
             MovieAdapter adapter = new MovieAdapter(getActivity(), movies);
             mMovieGrid.setAdapter(adapter);
             mSortKey = savedInstanceState.getString(MOVIE_SORT);
@@ -78,10 +112,10 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         mMovieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MovieParcel movie = (MovieParcel) mMovieGrid.getItemAtPosition(position);
+                MovieModel movie = (MovieModel) mMovieGrid.getItemAtPosition(position);
                 Intent details = new Intent(getActivity(), MovieDetailActivity.class);
-                details.putExtra(MovieParcel.EXTRA_MOVIE, movie);
-                startActivity(details);
+                details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
+                //startActivity(details);
             }
         });
 
@@ -101,9 +135,19 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         }
         mSortKey = sortKey;
 
-        MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
-        popularTask.execute(sortKey);
+        //MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
+        //popularTask.execute(sortKey);
 
+        if( mMovieDBApi == null) {
+            RestAdapter restAdapter = new RestAdapter.Builder()
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
+                    .setEndpoint(TheMovieDBConsts.API_URL)
+                    .build();
+
+            mMovieDBApi = restAdapter.create(TheMovieDBApi.class);
+        }
+
+        mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, mSortKey, this);
 
     }
 }
