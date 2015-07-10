@@ -1,5 +1,6 @@
 package com.testinprod.popularmovies.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,10 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
+import com.testinprod.popularmovies.activities.MovieDetailActivity;
 import com.testinprod.popularmovies.models.Movie;
 import com.testinprod.popularmovies.tasks.MovieDiscoverTask;
 
@@ -72,6 +75,15 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
             refreshGrid();
         }
 
+        mMovieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = (Movie) mMovieGrid.getItemAtPosition(position);
+                Intent details = new Intent(getActivity(), MovieDetailActivity.class);
+                details.putExtra(Movie.EXTRA_MOVIE, movie);
+                startActivity(details);
+            }
+        });
 
         return rootView;
     }

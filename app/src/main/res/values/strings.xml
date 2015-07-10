@@ -51,4 +51,5 @@
         <item>Vote Average</item>
         <item>Vote Count</item>
     </string-array>
+    <string name="title_activity_movie_detail">Movie Details</string>
 </resources>

@@ -15,6 +15,8 @@ import java.util.Date;
  */
 public class Movie implements Parcelable {
 
+    public static final String EXTRA_MOVIE = Movie.class.getCanonicalName();
+
     private static final String ADULT_FIELD = "adult";
     private static final String BACKDROP_PATH_FIELD = "backdrop_path";
     private static final String ID_FIELD = "id";
