@@ -1,6 +1,8 @@
 package com.testinprod.popularmovies;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class MovieGridFragment extends Fragment implements MovieDiscoverTask.MovieDiscoverTaskResults{
+    private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private GridView mMovieGrid;
 
     @Override
@@ -28,6 +31,12 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        refreshGrid();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -35,8 +44,17 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
 
-        MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
-        popularTask.execute("test");
+        refreshGrid();
         return rootView;
+    }
+
+    private void refreshGrid()
+    {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortKey = preferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+        sortKey += "." + preferences.getString(getString(R.string.pref_sort_dir_key), getString(R.string.pref_sort_dir_default));
+
+        MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
+        popularTask.execute(sortKey);
     }
 }

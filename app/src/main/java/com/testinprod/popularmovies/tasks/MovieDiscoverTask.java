@@ -25,6 +25,7 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
     private static final String API_KEY = "***REMOVED***";
     private static final String API_PARAM = "api_key";
     private static final String JSON_RESULTS = "results";
+    private static final String SORT_PARAM = "sort_by";
     private static final String LOG_TAG = MovieDiscoverTask.class.getSimpleName();
 
     private MovieDiscoverTaskResults mCallback;
@@ -39,26 +40,41 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
         super.onPostExecute(movies);
         if(mCallback != null)
         {
+            Log.v(LOG_TAG, "Movies found: " + movies.size());
             mCallback.handleMovieDiscoverResults(movies);
         }
     }
 
-    // TODO: Pass in sorting
     protected ArrayList<Movie> doInBackground(String... params) {
         if(mCallback == null)
         {
             return null;
         }
 
+        String sortKey = "";
+
+        if(params.length>0)
+        {
+            sortKey = params[0];
+        }
+
+
         HttpURLConnection httpURLConnection = null;
         BufferedReader bufferedReader = null;
 
         String jsonResults;
 
+        Log.v(LOG_TAG, "Fetching with sorting: " + sortKey);
+
         try{
             Uri.Builder builder = Uri.parse("http://api.themoviedb.org/3/discover/movie").buildUpon();
             builder.appendQueryParameter(API_PARAM, API_KEY);
+            if(!sortKey.isEmpty())
+            {
+                builder.appendQueryParameter(SORT_PARAM, sortKey);
+            }
             String urlStr = builder.build().toString();
+            Log.v(LOG_TAG, "Query: " + urlStr);
             URL url = new URL(urlStr);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
@@ -69,7 +85,7 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
             {
                 return new ArrayList<>();
             }
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
 
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -84,7 +100,6 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
                 return new ArrayList<>();
             }
             jsonResults = buffer.toString();
-            Log.v(LOG_TAG, "JSON Results: " + jsonResults);
         } catch(IOException e)
         {
             Log.e(LOG_TAG, "Error loading discover list", e);
