@@ -1,10 +1,10 @@
-package com.testinprod.popularmovies;
+package com.testinprod.popularmovies.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+
+import com.testinprod.popularmovies.R;
+import com.testinprod.popularmovies.fragments.SettingsFragment;
 
 
 public class SettingsActivity extends AppCompatActivity {

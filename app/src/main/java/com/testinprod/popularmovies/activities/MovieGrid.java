@@ -1,10 +1,13 @@
-package com.testinprod.popularmovies;
+package com.testinprod.popularmovies.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.testinprod.popularmovies.fragments.MovieGridFragment;
+import com.testinprod.popularmovies.R;
 
 
 public class MovieGrid extends AppCompatActivity {

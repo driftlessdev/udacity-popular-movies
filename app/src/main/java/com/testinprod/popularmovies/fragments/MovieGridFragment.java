@@ -1,4 +1,4 @@
-package com.testinprod.popularmovies;
+package com.testinprod.popularmovies.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.testinprod.popularmovies.MovieAdapter;
+import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.models.Movie;
 import com.testinprod.popularmovies.tasks.MovieDiscoverTask;
 
