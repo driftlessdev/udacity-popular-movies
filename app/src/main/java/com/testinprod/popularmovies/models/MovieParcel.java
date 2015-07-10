@@ -13,9 +13,9 @@ import java.util.Date;
 /**
  * Created by Tim on 7/8/2015.
  */
-public class Movie implements Parcelable {
+public class MovieParcel implements Parcelable {
 
-    public static final String EXTRA_MOVIE = Movie.class.getCanonicalName();
+    public static final String EXTRA_MOVIE = MovieParcel.class.getCanonicalName();
 
     private static final String ADULT_FIELD = "adult";
     private static final String BACKDROP_PATH_FIELD = "backdrop_path";
@@ -60,7 +60,7 @@ public class Movie implements Parcelable {
         dest.writeInt(mVoteCount);
     }
 
-    private Movie(Parcel source)
+    private MovieParcel(Parcel source)
     {
         mIsAdult = source.readByte() == 1;
         mId = source.readString();
@@ -74,27 +74,27 @@ public class Movie implements Parcelable {
         mVoteCount = source.readInt();
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>()
+    public static final Parcelable.Creator<MovieParcel> CREATOR = new Parcelable.Creator<MovieParcel>()
     {
         @Override
-        public Movie[] newArray(int size) {
-            return new Movie[0];
+        public MovieParcel[] newArray(int size) {
+            return new MovieParcel[0];
         }
 
         @Override
-        public Movie createFromParcel(Parcel source) {
-            return new Movie(source);
+        public MovieParcel createFromParcel(Parcel source) {
+            return new MovieParcel(source);
         }
     };
 
-    public Movie(String JsonString)
+    public MovieParcel(String JsonString)
             throws JSONException
     {
         JSONObject movieJSON = new JSONObject(JsonString);
         loadFromJSON(movieJSON);
     }
 
-    public Movie(JSONObject movieJSON)
+    public MovieParcel(JSONObject movieJSON)
             throws JSONException
     {
         loadFromJSON(movieJSON);

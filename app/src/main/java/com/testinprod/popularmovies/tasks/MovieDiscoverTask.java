@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.testinprod.popularmovies.models.Movie;
+import com.testinprod.popularmovies.models.MovieParcel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +21,8 @@ import java.util.ArrayList;
 /**
  * Created by Tim on 7/8/2015.
  */
-public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+//TODO: Replace with Retrofit: http://square.github.io/retrofit/
+public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<MovieParcel>> {
     private static final String API_KEY = "***REMOVED***";
     private static final String API_PARAM = "api_key";
     private static final String JSON_RESULTS = "results";
@@ -36,7 +37,7 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Movie> movies) {
+    protected void onPostExecute(ArrayList<MovieParcel> movies) {
         super.onPostExecute(movies);
         if(mCallback != null)
         {
@@ -45,7 +46,7 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
         }
     }
 
-    protected ArrayList<Movie> doInBackground(String... params) {
+    protected ArrayList<MovieParcel> doInBackground(String... params) {
         if(mCallback == null)
         {
             return null;
@@ -117,13 +118,13 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
             }
         }
 
-        ArrayList<Movie> movies = new ArrayList<>();
+        ArrayList<MovieParcel> movies = new ArrayList<>();
         try {
             JSONObject result = new JSONObject(jsonResults);
             JSONArray moviesArray = result.getJSONArray(JSON_RESULTS);
             for(int i = 0; i < moviesArray.length(); i++)
             {
-                movies.add(new Movie(moviesArray.getJSONObject(i)));
+                movies.add(new MovieParcel(moviesArray.getJSONObject(i)));
             }
         } catch (JSONException e)
         {
@@ -135,6 +136,6 @@ public class MovieDiscoverTask extends AsyncTask<String, Void, ArrayList<Movie>>
     }
 
     public interface MovieDiscoverTaskResults{
-        void handleMovieDiscoverResults(ArrayList<Movie> movies);
+        void handleMovieDiscoverResults(ArrayList<MovieParcel> movies);
     }
 }

@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.fragments.MovieDetailFragment;
-import com.testinprod.popularmovies.models.Movie;
+import com.testinprod.popularmovies.models.MovieParcel;
 
 import java.security.InvalidParameterException;
 
@@ -21,7 +21,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if(savedInstanceState == null)
         {
-            Movie movie = getIntent().getExtras().getParcelable(Movie.EXTRA_MOVIE);
+            MovieParcel movie = getIntent().getExtras().getParcelable(MovieParcel.EXTRA_MOVIE);
             if(movie == null)
             {
                 throw new InvalidParameterException("Can't do a movie detail without a movie.");

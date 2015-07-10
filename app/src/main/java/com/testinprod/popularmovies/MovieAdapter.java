@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.testinprod.popularmovies.models.Movie;
+import com.testinprod.popularmovies.models.MovieParcel;
 
 import java.util.ArrayList;
 
@@ -17,9 +17,9 @@ import java.util.ArrayList;
  */
 public class MovieAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<Movie> mMovies;
+    private ArrayList<MovieParcel> mMovies;
 
-    public MovieAdapter(Context context, ArrayList<Movie> movies)
+    public MovieAdapter(Context context, ArrayList<MovieParcel> movies)
     {
         mContext = context;
         mMovies = movies;
@@ -39,7 +39,7 @@ public class MovieAdapter extends BaseAdapter {
         return position;
     }
 
-    public ArrayList<Movie> getMovies()
+    public ArrayList<MovieParcel> getMovies()
     {
         return mMovies;
     }

@@ -15,7 +15,7 @@ import android.widget.GridView;
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.activities.MovieDetailActivity;
-import com.testinprod.popularmovies.models.Movie;
+import com.testinprod.popularmovies.models.MovieParcel;
 import com.testinprod.popularmovies.tasks.MovieDiscoverTask;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
     private String mSortKey;
 
     @Override
-    public void handleMovieDiscoverResults(ArrayList<Movie> movies) {
+    public void handleMovieDiscoverResults(ArrayList<MovieParcel> movies) {
         mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movies));
     }
 
@@ -65,7 +65,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         if(savedInstanceState != null)
         {
             Log.v(LOG_TAG, "Restoring state");
-            ArrayList<Movie> movies =  savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+            ArrayList<MovieParcel> movies =  savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             MovieAdapter adapter = new MovieAdapter(getActivity(), movies);
             mMovieGrid.setAdapter(adapter);
             mSortKey = savedInstanceState.getString(MOVIE_SORT);
@@ -78,9 +78,9 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
         mMovieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = (Movie) mMovieGrid.getItemAtPosition(position);
+                MovieParcel movie = (MovieParcel) mMovieGrid.getItemAtPosition(position);
                 Intent details = new Intent(getActivity(), MovieDetailActivity.class);
-                details.putExtra(Movie.EXTRA_MOVIE, movie);
+                details.putExtra(MovieParcel.EXTRA_MOVIE, movie);
                 startActivity(details);
             }
         });
@@ -103,5 +103,7 @@ public class MovieGridFragment extends Fragment implements MovieDiscoverTask.Mov
 
         MovieDiscoverTask popularTask = new MovieDiscoverTask(this);
         popularTask.execute(sortKey);
+
+
     }
 }

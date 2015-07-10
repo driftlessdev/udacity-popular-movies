@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
-import com.testinprod.popularmovies.models.Movie;
+import com.testinprod.popularmovies.models.MovieParcel;
 
 import java.text.SimpleDateFormat;
 
@@ -35,13 +35,13 @@ public class MovieDetailFragment extends Fragment {
     private CardView mHeader;
     private ImageView mPoster;
     private ActionBar mBar;
-    private Movie mMovie;
+    private MovieParcel mMovie;
 
-    public static MovieDetailFragment newInstance(Movie movie)
+    public static MovieDetailFragment newInstance(MovieParcel movie)
     {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(Movie.EXTRA_MOVIE, movie);
+        args.putParcelable(MovieParcel.EXTRA_MOVIE, movie);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +57,7 @@ public class MovieDetailFragment extends Fragment {
         mHeader = (CardView) rootView.findViewById(R.id.cvDetailHeader);
 
         Bundle args = getArguments();
-        mMovie = args.getParcelable(Movie.EXTRA_MOVIE);
+        mMovie = args.getParcelable(MovieParcel.EXTRA_MOVIE);
 
         TextView overview = (TextView) rootView.findViewById(R.id.tvOverview);
         overview.setText(mMovie.getOverview());
