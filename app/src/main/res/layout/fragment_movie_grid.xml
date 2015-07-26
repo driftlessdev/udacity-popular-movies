@@ -10,6 +10,8 @@
         android:layout_height="fill_parent"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
+        android:horizontalSpacing="0dp"
+        android:verticalSpacing="0dp"
         />
 
 </RelativeLayout>

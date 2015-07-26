@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
@@ -48,12 +49,16 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
         {
             movieModels = new ArrayList<>();
         }
+        Log.v(LOG_TAG, "Movies Loaded: " + movieModels.size());
+        if(movieModels.size() == 0) {
+            Toast.makeText(getActivity(), "No movies found, please try a different search", Toast.LENGTH_LONG).show();
+        }
         mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movieModels));
     }
 
     @Override
     public void failure(RetrofitError error) {
-
+        Log.e(LOG_TAG, "Failure to load: " + error.toString());
     }
 
     private static final String MOVIE_SORT = "movies.sort";
@@ -119,6 +124,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
         String sortKey = preferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
         sortKey += "." + preferences.getString(getString(R.string.pref_sort_dir_key), getString(R.string.pref_sort_dir_default));
 
+        Log.v(LOG_TAG, "Current: " + mSortKey + ", New: " + sortKey);
         if(sortKey.equals(mSortKey))
         {
             Log.v(LOG_TAG, "Sorting hasn't changed, skipping refresh");

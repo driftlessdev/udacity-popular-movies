@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
@@ -49,26 +50,36 @@ public class MovieAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView movieThumb;
         if(convertView == null)
         {
             LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            movieThumb = (ImageView) inflater.inflate(R.layout.movie_item, parent, false);
+            convertView = inflater.inflate(R.layout.movie_item, parent, false);
+        }
+
+        ImageView movieThumb = (ImageView) convertView.findViewById(R.id.ivMoviePoster);
+        View rlNoPoster = convertView.findViewById(R.id.rlNoPoster);
+
+        MovieModel movie = mMovieModels.get(position);
+        String posterURL = movie.getPosterPath();
+        TextView tvPlaceholder = (TextView) convertView.findViewById(R.id.tvTitlePlaceholder);
+        Log.v(LOG_TAG, "Poster Path: " + TheMovieDBConsts.POSTER_BASE_URL + posterURL);
+        if(posterURL != null && !posterURL.isEmpty())
+        {
+            rlNoPoster.setVisibility(View.GONE);
+            movieThumb.setVisibility(View.VISIBLE);
+            Picasso.with(mContext)
+                    .load(TheMovieDBConsts.POSTER_BASE_URL + posterURL)
+                    .placeholder(R.drawable.movie_board)
+                    .into(movieThumb);
         }
         else
         {
-            movieThumb = (ImageView) convertView;
+            Log.v(LOG_TAG, "No poster, showing title of " + movie.getTitle());
+            movieThumb.setVisibility(View.GONE);
+            rlNoPoster.setVisibility(View.VISIBLE);
+            tvPlaceholder.setText(movie.getTitle());
         }
 
-        String posterURL = mMovieModels.get(position).getPosterPath();
-        Log.v(LOG_TAG, "Poster Path: " + posterURL);
-        if(posterURL != null && !posterURL.isEmpty())
-        {
-            Picasso.with(mContext)
-                    .load(TheMovieDBConsts.POSTER_BASE_URL + posterURL)
-                    .into(movieThumb);
-        }
-
-        return movieThumb;
+        return convertView;
     }
 }

@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout
     android:layout_height="match_parent"
-    android:scaleType="centerCrop"
-    android:id="@+id/ivMoviePoster"
-    android:adjustViewBounds="true">
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center">
 
-</ImageView>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rlNoPoster"
+        android:visibility="gone"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="185dp"
+            android:layout_height="260dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/movie_board"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Title Placeholder"
+            android:id="@+id/tvTitlePlaceholder"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
+
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:id="@+id/ivMoviePoster"
+        android:adjustViewBounds="true">
+    </ImageView>
+
+</LinearLayout>
