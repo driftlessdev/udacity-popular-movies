@@ -1,6 +1,7 @@
 package com.testinprod.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,8 @@ public class MovieAdapter extends BaseAdapter {
         }
 
         String posterURL = mMovieModels.get(position).getPosterPath();
-        if(!posterURL.isEmpty())
+        Log.v(LOG_TAG, "Poster Path: " + posterURL);
+        if(posterURL != null && !posterURL.isEmpty())
         {
             Picasso.with(mContext)
                     .load(TheMovieDBConsts.POSTER_BASE_URL + posterURL)
