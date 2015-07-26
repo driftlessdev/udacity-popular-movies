@@ -19,7 +19,8 @@
             android:scaleType="fitCenter"
             android:id="@+id/ivMovieHeader"
             android:adjustViewBounds="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/movie_board"/>
     </android.support.v7.widget.CardView>
 
     <LinearLayout

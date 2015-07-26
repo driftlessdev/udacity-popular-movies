@@ -77,11 +77,13 @@ public class MovieDetailFragment extends Fragment {
 
         mPoster = (ImageView) rootView.findViewById(R.id.ivMovieHeader);
         String path = mMovie.getPosterPath();
-        if(!path.isEmpty())
+        if(path != null && !path.isEmpty())
         {
             Picasso.with(getActivity())
                     .load(TheMovieDBConsts.POSTER_BASE_URL + path)
                     .into(mPoster, new ImageLoadedCallback());
+        } else {
+            setDefaultHeaderColors();
         }
 
 
@@ -98,6 +100,13 @@ public class MovieDetailFragment extends Fragment {
         }
         release.setText(dateText);
         return rootView;
+    }
+
+    private void parseHeaderColors()
+    {
+        Bitmap bitmap = ((BitmapDrawable) mPoster.getDrawable()).getBitmap();
+        Palette.from(bitmap)
+                .generate(new PosterPaletteListener());
     }
 
     private void setDefaultHeaderColors()
@@ -128,9 +137,7 @@ public class MovieDetailFragment extends Fragment {
         @Override
         public void onSuccess() {
             Log.v(LOG_TAG, "Image Loaded, extracting colors");
-            Bitmap bitmap = ((BitmapDrawable) mPoster.getDrawable()).getBitmap();
-            Palette.from(bitmap)
-                    .generate(new PosterPaletteListener());
+            parseHeaderColors();
         }
 
         @Override
