@@ -29,6 +29,7 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 
 /**
@@ -49,7 +50,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
         {
             movieModels = new ArrayList<>();
         }
-        Log.v(LOG_TAG, "Movies Loaded: " + movieModels.size());
+        Timber.v("Movies Loaded: " + movieModels.size());
         if(movieModels.size() == 0) {
             Toast.makeText(getActivity(), "No movies found, please try a different search", Toast.LENGTH_LONG).show();
         }
@@ -80,7 +81,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
     @Override
     public void onStart() {
         super.onStart();
-        Log.v(LOG_TAG, "onStart");
+        Timber.v("onStart");
         refreshGrid();
     }
 
@@ -88,13 +89,14 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Timber.tag(LOG_TAG);
         // TODO: Loading spinner
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
 
         if(savedInstanceState != null)
         {
-            Log.v(LOG_TAG, "Restoring state");
+            Timber.v("Restoring state");
             ArrayList<MovieModel> movies = Parcels.unwrap(savedInstanceState.getParcelable(MOVIE_LIST));
             MovieAdapter adapter = new MovieAdapter(getActivity(), movies);
             mMovieGrid.setAdapter(adapter);
@@ -124,10 +126,10 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
         String sortKey = preferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
         sortKey += "." + preferences.getString(getString(R.string.pref_sort_dir_key), getString(R.string.pref_sort_dir_default));
 
-        Log.v(LOG_TAG, "Current: " + mSortKey + ", New: " + sortKey);
+        Timber.v("Current: " + mSortKey + ", New: " + sortKey);
         if(sortKey.equals(mSortKey))
         {
-            Log.v(LOG_TAG, "Sorting hasn't changed, skipping refresh");
+            Timber.v("Sorting hasn't changed, skipping refresh");
             return;
         }
         mSortKey = sortKey;

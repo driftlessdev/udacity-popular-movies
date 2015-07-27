@@ -1,14 +1,15 @@
 package com.testinprod.popularmovies.fragments;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.os.Bundle;
-import android.util.Log;
 
 import com.testinprod.popularmovies.R;
+
+import timber.log.Timber;
 
 
 /**
@@ -19,14 +20,14 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        Log.v(LOG_TAG, "Changed preference for: " + key);
+        Timber.v("Changed preference for: " + key);
         Preference pref = findPreference(key);
         String valueKey = sharedPreferences.getString(key,"");
         if(pref instanceof ListPreference)
         {
             ListPreference listPreference = (ListPreference) pref;
             int selected = listPreference.findIndexOfValue(valueKey);
-            Log.v(LOG_TAG, "List Preference with item selected: " + selected);
+            Timber.v("List Preference with item selected: " + selected);
             if(selected >= 0)
             {
                 listPreference.setSummary(listPreference.getEntries()[selected]);
@@ -44,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.tag(LOG_TAG);
         addPreferencesFromResource(R.xml.pref_general);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());

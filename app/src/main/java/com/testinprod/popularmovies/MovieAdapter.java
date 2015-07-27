@@ -1,7 +1,6 @@
 package com.testinprod.popularmovies;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,8 @@ import com.testinprod.popularmovies.models.MovieModel;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 /**
  * Created by Tim on 7/8/2015.
  */
@@ -27,6 +28,7 @@ public class MovieAdapter extends BaseAdapter {
     {
         mContext = context;
         mMovieModels = movies;
+        Timber.tag(LOG_TAG);
     }
     @Override
     public int getCount() {
@@ -62,7 +64,7 @@ public class MovieAdapter extends BaseAdapter {
         MovieModel movie = mMovieModels.get(position);
         String posterURL = movie.getPosterPath();
         TextView tvPlaceholder = (TextView) convertView.findViewById(R.id.tvTitlePlaceholder);
-        Log.v(LOG_TAG, "Poster Path: " + TheMovieDBConsts.POSTER_BASE_URL + posterURL);
+        Timber.v("Poster Path: " + TheMovieDBConsts.POSTER_BASE_URL + posterURL);
         if(posterURL != null && !posterURL.isEmpty())
         {
             rlNoPoster.setVisibility(View.GONE);
@@ -74,7 +76,7 @@ public class MovieAdapter extends BaseAdapter {
         }
         else
         {
-            Log.v(LOG_TAG, "No poster, showing title of " + movie.getTitle());
+            Timber.v("No poster, showing title of " + movie.getTitle());
             movieThumb.setVisibility(View.GONE);
             rlNoPoster.setVisibility(View.VISIBLE);
             tvPlaceholder.setText(movie.getTitle());

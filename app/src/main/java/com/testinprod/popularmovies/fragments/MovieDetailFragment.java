@@ -12,7 +12,6 @@ import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,8 @@ import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import timber.log.Timber;
 
 
 /**
@@ -56,6 +57,7 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Timber.tag(LOG_TAG);
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         mHeader = (CardView) rootView.findViewById(R.id.cvDetailHeader);
@@ -128,7 +130,8 @@ public class MovieDetailFragment extends Fragment {
         }
         else
         {
-            Log.v(LOG_TAG, "ActionBar not found");
+
+            Timber.v("ActionBar not found");
         }
     }
 
@@ -136,7 +139,7 @@ public class MovieDetailFragment extends Fragment {
     {
         @Override
         public void onSuccess() {
-            Log.v(LOG_TAG, "Image Loaded, extracting colors");
+            Timber.v( "Image Loaded, extracting colors");
             parseHeaderColors();
         }
 
@@ -155,7 +158,7 @@ public class MovieDetailFragment extends Fragment {
             int bgColor;
             // No vibrant, inconceivable!
             if(swatch == null) {
-                Log.v(LOG_TAG, "Falling back to Muted");
+                Timber.v( "Falling back to Muted");
                 swatch = palette.getMutedSwatch();
             }
             if(swatch != null)
@@ -165,7 +168,7 @@ public class MovieDetailFragment extends Fragment {
             }
             else
             {
-                Log.v(LOG_TAG, "Falling back to default colors");
+                Timber.v( "Falling back to default colors");
                 setDefaultHeaderColors();
                 return;
             }
