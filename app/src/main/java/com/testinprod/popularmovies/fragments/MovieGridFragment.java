@@ -142,7 +142,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
             mMovieDBApi = restAdapter.create(TheMovieDBApi.class);
         }
 
-        mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, mSortKey, this);
+        mMovieDBApi.discoverMovies(getActivity().getString(R.string.tmdb_api_key), mSortKey, this);
 
     }
 }
