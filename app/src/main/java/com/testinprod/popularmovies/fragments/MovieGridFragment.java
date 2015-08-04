@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.testinprod.popularmovies.BuildConfig;
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.activities.MovieDetailActivity;
@@ -90,6 +91,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
                              Bundle savedInstanceState) {
 
         Timber.tag(LOG_TAG);
+
         // TODO: Loading spinner
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
@@ -142,7 +144,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
             mMovieDBApi = restAdapter.create(TheMovieDBApi.class);
         }
 
-        mMovieDBApi.discoverMovies(getActivity().getString(R.string.tmdb_api_key), mSortKey, this);
+        mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, mSortKey, this);
 
     }
 }
