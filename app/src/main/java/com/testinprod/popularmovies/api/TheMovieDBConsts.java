@@ -6,7 +6,7 @@ import com.testinprod.popularmovies.models.MovieModel;
  * Created by tschaab on 7/10/2015.
  */
 public final class TheMovieDBConsts {
-    public static final String API_KEY = "***REMOVED***";
+    public static final String API_KEY = "<REPLACE ME>";
     public static final String API_PARAM = "api_key";
     public static final String JSON_RESULTS = "results";
     public static final String SORT_PARAM = "sort_by";
