@@ -16,7 +16,8 @@ public class TestDB extends AndroidTestCase{
         mContext.deleteDatabase(MovieDBHelper.DATABASE_NAME);
     }
 
-    public void setUp() {
+    public void setUp() throws Exception{
+        super.setUp();
         deleteDatabase();
     }
 

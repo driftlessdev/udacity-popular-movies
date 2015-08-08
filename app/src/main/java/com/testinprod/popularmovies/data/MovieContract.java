@@ -78,9 +78,24 @@ public class MovieContract {
         // INTEGER
         public static final String COLUMN_VOTE_COUNT = "vote_count";
 
+        public static String getExternalIdFromUri(Uri uri)
+        {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static String getInternalIdFromUri(Uri uri)
+        {
+            return uri.getPathSegments().get(1);
+        }
+
         public static Uri buildMovieUri(long id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildMovieExternalIDUri(long id)
+        {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(id)).appendPath("byExtId").build();
         }
     }
 }

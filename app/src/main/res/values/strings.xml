@@ -54,4 +54,6 @@
     <string name="title_activity_movie_detail">Movie Details</string>
     <string name="released_title">Released</string>
     <string name="rating_title">Rating</string>
+
+    <string name="content_authority" translatable="false">com.testinprod.popularmovies</string>
 </resources>
