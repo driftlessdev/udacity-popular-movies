@@ -39,6 +39,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.testinprod.popularmovies.activities.MovieGrid" />
         </activity>
+
+        <service android:name=".sync.MovieAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
+        </service>
     </application>
 
 </manifest>

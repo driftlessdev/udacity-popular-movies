@@ -56,4 +56,5 @@
     <string name="rating_title">Rating</string>
 
     <string name="content_authority" translatable="false">com.testinprod.popularmovies</string>
+    <string name="sync_account_type" translatable="false">@string/content_authority</string>
 </resources>
