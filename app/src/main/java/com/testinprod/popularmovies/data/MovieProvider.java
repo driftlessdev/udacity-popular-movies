@@ -117,6 +117,7 @@ public class MovieProvider extends ContentProvider {
         switch(match)
         {
             case MOVIES:
+                // Replace action adapted from https://www.buzzingandroid.com/2013/01/sqlite-insert-or-replace-through-contentprovider/
                 boolean replace = false;
                 if(values.containsKey(MovieContract.MovieEntry.ACTION_REPLACE))
                 {
