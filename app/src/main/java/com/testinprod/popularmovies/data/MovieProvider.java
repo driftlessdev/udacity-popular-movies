@@ -117,7 +117,22 @@ public class MovieProvider extends ContentProvider {
         switch(match)
         {
             case MOVIES:
-                long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                boolean replace = false;
+                if(values.containsKey(MovieContract.MovieEntry.ACTION_REPLACE))
+                {
+                    replace = values.getAsBoolean(MovieContract.MovieEntry.ACTION_REPLACE);
+                    values.remove(MovieContract.MovieEntry.ACTION_REPLACE);
+                }
+                long _id;
+                if(replace)
+                {
+                    _id = db.replace(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                }
+                else
+                {
+                    _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                }
+
                 if( _id > 0)
                 {
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);

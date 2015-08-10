@@ -78,6 +78,8 @@ public class MovieContract {
         // INTEGER
         public static final String COLUMN_VOTE_COUNT = "vote_count";
 
+        public static final String ACTION_REPLACE = "__SQL_USE_REPLACE__";
+
         public static String getExternalIdFromUri(Uri uri)
         {
             return uri.getPathSegments().get(1);

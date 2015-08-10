@@ -86,6 +86,19 @@ public class TestProvider extends AndroidTestCase {
 
         // Validate through read
         validateSingleMovie(movieId, values);
+
+        // Test replace
+        ContentValues replacement = new ContentValues(values);
+        replacement.put(MovieContract.MovieEntry.ACTION_REPLACE, true);
+        replacement.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "THIS IS AN REPLACEMENT!");
+        movieUri =  mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, replacement);
+        movieId = ContentUris.parseId(movieUri);
+
+        assertTrue(movieId != -1);
+
+        // Validate through read
+        validateSingleMovie(movieId, replacement);
+
     }
 
     public void testMovieUpdate()
