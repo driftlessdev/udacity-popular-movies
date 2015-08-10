@@ -1,5 +1,6 @@
 package com.testinprod.popularmovies.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,10 +15,11 @@ import android.widget.GridView;
 
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
+import com.testinprod.popularmovies.activities.MovieDetailActivity;
+import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
-import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 
@@ -66,13 +68,11 @@ public class MovieGridFragment
         return null;
     }
 
-    @DebugLog
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mMovieAdapter.swapCursor(data);
     }
 
-    @DebugLog
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mMovieAdapter.swapCursor(null);
@@ -126,12 +126,10 @@ public class MovieGridFragment
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if(cursor != null)
                 {
-                    // TODO: Re-enable when the details use the content adapter
-                    Timber.d("Movie to view details: " + cursor.getInt(COL_MOVIE_ID));
-//                    MovieModel movie = (MovieModel) mMovieGrid.getItemAtPosition(position);
-//                    Intent details = new Intent(getActivity(), MovieDetailActivity.class);
-//                    details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
-//                    startActivity(details);
+                    long movieId = cursor.getInt(COL_MOVIE_ID);
+                    Intent details = new Intent(getActivity(), MovieDetailActivity.class);
+                    details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, movieId);
+                    startActivity(details);
                 }
 
             }

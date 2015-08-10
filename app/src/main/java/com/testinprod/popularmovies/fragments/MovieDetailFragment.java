@@ -1,8 +1,10 @@
 package com.testinprod.popularmovies.fragments;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -22,10 +24,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieModel;
 
-import org.parceler.Parcels;
-
+import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,11 +44,11 @@ public class MovieDetailFragment extends Fragment {
     private ActionBar mBar;
     private MovieModel mMovie;
 
-    public static MovieDetailFragment newInstance(MovieModel movie)
+    public static MovieDetailFragment newInstance(long movieId)
     {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
+        args.putLong(TheMovieDBConsts.EXTRA_MOVIE, movieId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,7 +65,15 @@ public class MovieDetailFragment extends Fragment {
         mHeader = (CardView) rootView.findViewById(R.id.cvDetailHeader);
 
         Bundle args = getArguments();
-        mMovie = Parcels.unwrap(args.getParcelable(TheMovieDBConsts.EXTRA_MOVIE));
+        long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
+        Uri movieUri = MovieContract.MovieEntry.buildMovieExternalIDUri(movieId);
+        Cursor cursor = getActivity().getContentResolver().query(movieUri, MovieModel.ALL_COLUMN_PROJECTION, null, null, null);
+        if(!cursor.moveToFirst())
+        {
+            Timber.e(new InvalidParameterException("Movie does not exist"), "Movie doesn't exist");
+            return null;
+        }
+        mMovie = new MovieModel(cursor);
 
         TextView overview = (TextView) rootView.findViewById(R.id.tvOverview);
         overview.setText(mMovie.getOverview());

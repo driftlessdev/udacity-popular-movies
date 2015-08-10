@@ -2,6 +2,8 @@
 package com.testinprod.popularmovies.models;
 
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.text.format.DateFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -12,8 +14,10 @@ import org.parceler.Parcel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 // Generated via http://www.jsonschema2pojo.org/
 @Parcel
@@ -55,6 +59,10 @@ public class MovieModel {
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
+
+    public MovieModel() {
+
+    }
 
     /**
      * 
@@ -184,7 +192,7 @@ public class MovieModel {
 
     public Date getReleaseDateClass()
     {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
         try{
             return format.parse(releaseDate);
         } catch (ParseException e)
@@ -341,6 +349,59 @@ public class MovieModel {
         values.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, this.getVoteCount());
 
         return values;
+    }
+
+    public static final String[] ALL_COLUMN_PROJECTION = {
+        MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.COLUMN_ADULT,
+            MovieContract.MovieEntry.COLUMN_BACKDROP_PATH,
+            MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE,
+            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_POPULARITY,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_VIDEO,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_VOTE_COUNT
+    };
+
+    private static final int COL_ID = 0;
+    private static final int COL_MOVIE_ID = 1;
+    private static final int COL_OVERVIEW = 2;
+    private static final int COL_ADULT = 3;
+    private static final int COL_BACKDROP_PATH = 4;
+    private static final int COL_ORIGINAL_LANGUAGE = 5;
+    private static final int COL_ORIGINAL_TITLE = 6;
+    private static final int COL_RELEASE_DATE = 7;
+    private static final int COL_POSTER_PATH = 8;
+    private static final int COL_POPULARITY = 9;
+    private static final int COL_TITLE = 10;
+    private static final int COL_VIDEO = 11;
+    private static final int COL_VOTE_AVERAGE = 12;
+    private static final int COL_VOTE_COUNT = 13;
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+
+    public MovieModel(Cursor cursor)
+    {
+        id = cursor.getInt(COL_MOVIE_ID);
+        overview = cursor.getString(COL_OVERVIEW);
+        adult = (cursor.getInt(COL_ADULT) == 1);
+        backdropPath = cursor.getString(COL_BACKDROP_PATH);
+        originalLanguage = cursor.getString(COL_ORIGINAL_LANGUAGE);
+        originalTitle = cursor.getString(COL_ORIGINAL_TITLE);
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(cursor.getLong(COL_RELEASE_DATE));
+        releaseDate = DateFormat.format(DATE_FORMAT, cal).toString();
+        posterPath = cursor.getString(COL_POSTER_PATH);
+        popularity = cursor.getDouble(COL_POPULARITY);
+        title = cursor.getString(COL_TITLE);
+        video = (cursor.getInt(COL_VIDEO) == 1);
+        voteAverage = cursor.getDouble(COL_VOTE_AVERAGE);
+        voteCount = cursor.getInt(COL_VOTE_COUNT);
     }
 
 }

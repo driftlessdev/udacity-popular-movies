@@ -6,11 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.fragments.MovieDetailFragment;
-import com.testinprod.popularmovies.models.MovieModel;
-
-import org.parceler.Parcels;
-
-import java.security.InvalidParameterException;
 
 
 public class MovieDetailActivity extends AppCompatActivity {
@@ -24,13 +19,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         if(savedInstanceState == null)
         {
-            MovieModel movie = Parcels.unwrap(getIntent().getExtras().getParcelable(TheMovieDBConsts.EXTRA_MOVIE));
-            if(movie == null)
-            {
-                throw new InvalidParameterException("Can't do a movie detail without a movie.");
-            }
+            long movieId = getIntent().getExtras().getLong(TheMovieDBConsts.EXTRA_MOVIE);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.flMovieDetails, MovieDetailFragment.newInstance(movie))
+                    .add(R.id.flMovieDetails, MovieDetailFragment.newInstance(movieId))
                     .commit();
         }
     }
