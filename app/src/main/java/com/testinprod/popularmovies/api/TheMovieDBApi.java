@@ -13,4 +13,7 @@ public interface TheMovieDBApi {
 
     @GET("/3/discover/movie")
     public void discoverMovies(@Query("api_key") String apiKey, @Query("sort_by") String sorting, Callback<MovieDiscovery> callback);
+
+    @GET("/3/discover/movie")
+    public MovieDiscovery discoverMovies(@Query("api_key") String apiKey, @Query("sort_by") String sorting);
 }

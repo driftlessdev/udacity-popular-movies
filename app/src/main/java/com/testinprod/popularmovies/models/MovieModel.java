@@ -1,15 +1,19 @@
 
 package com.testinprod.popularmovies.models;
 
+import android.content.ContentValues;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.testinprod.popularmovies.data.MovieContract;
+
+import org.parceler.Parcel;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import org.parceler.Parcel;
 
 // Generated via http://www.jsonschema2pojo.org/
 @Parcel
@@ -313,6 +317,30 @@ public class MovieModel {
      */
     public void setVoteCount(Integer voteCount) {
         this.voteCount = voteCount;
+    }
+
+    public ContentValues getContentValues()
+    {
+        ContentValues values = new ContentValues();
+        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, this.getId());
+        values.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, this.getOverview());
+        values.put(MovieContract.MovieEntry.COLUMN_ADULT, (this.getAdult() ? 1:0));
+        values.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, this.getBackdropPath());
+        values.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, this.getOriginalLanguage());
+        values.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, this.getOriginalTitle());
+        Date releaseDate = getReleaseDateClass();
+        if(releaseDate != null)
+        {
+            values.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, releaseDate.getTime());
+        }
+        values.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, this.getPosterPath());
+        values.put(MovieContract.MovieEntry.COLUMN_POPULARITY, this.getPopularity());
+        values.put(MovieContract.MovieEntry.COLUMN_TITLE, this.getTitle());
+        values.put(MovieContract.MovieEntry.COLUMN_VIDEO, (this.getVideo() ? 1:0));
+        values.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, this.getVoteAverage());
+        values.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, this.getVoteCount());
+
+        return values;
     }
 
 }

@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.testinprod.popularmovies.models.MovieModel;
+
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -209,6 +211,22 @@ public class TestProvider extends AndroidTestCase {
         }
 
         cursor.close();
+    }
+
+    public void testMovieModelConversion()
+    {
+        MovieModel movie = TestUtilities.createMovieModel();
+
+        ContentValues values = movie.getContentValues();
+
+        Uri movieUri = mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+
+        long movieId = ContentUris.parseId(movieUri);
+
+        assertTrue(movieId != -1);
+
+        // Validate through read
+        validateSingleMovie(movieId, values);
     }
 
     private void validateSingleMovie(long movieId, ContentValues values)

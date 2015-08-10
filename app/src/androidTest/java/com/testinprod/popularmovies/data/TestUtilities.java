@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
 
+import com.testinprod.popularmovies.models.MovieModel;
 import com.testinprod.popularmovies.utils.PollingCheck;
 
 import java.util.Map;
@@ -72,6 +73,26 @@ public class TestUtilities extends AndroidTestCase {
         return movieValues;
     }
 
+    public static MovieModel createMovieModel()
+    {
+        MovieModel movie = new MovieModel();
+        movie.setAdult(false);
+        movie.setBackdropPath("/9eKd1DDDAbrDNXR2he7ZJEu7UkI.jpg");
+        movie.setId(207703);
+        movie.setOriginalLanguage("en");
+        movie.setOriginalTitle("Kingsman: The Secret Service");
+        movie.setOverview("Kingsman: The Secret Service tells the story of a super-secret spy organization that recruits an unrefined but promising street kid into the agency's ultra-competitive training program just as a global threat emerges from a twisted tech genius.");
+        movie.setReleaseDate("2015-02-13");
+        movie.setPosterPath("/oAISjx6DvR2yUn9dxj00vP8OcJJ.jpg");
+        movie.setPopularity(17.71923d);
+        movie.setTitle("Kingsman: The Secret Service");
+        movie.setVideo(false);
+        movie.setVoteAverage(7.7);
+        movie.setVoteCount(1044);
+
+        return movie;
+    }
+
     static long insertExampleMovie(Context context)
     {
         ContentValues values = createMovieValues();
@@ -95,7 +116,7 @@ public class TestUtilities extends AndroidTestCase {
         Note that this only tests that the onChange function is called; it does not test that the
         correct Uri is returned.
      */
-    static class TestContentObserver extends ContentObserver {
+    public static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
         boolean mContentChanged;
 
@@ -126,7 +147,7 @@ public class TestUtilities extends AndroidTestCase {
             // It's useful to look at the Android CTS source for ideas on how to test your Android
             // applications.  The reason that PollingCheck works is that, by default, the JUnit
             // testing framework is not running on the main Android application thread.
-            new PollingCheck(5000) {
+            new PollingCheck(10000) {
                 @Override
                 protected boolean check() {
                     return mContentChanged;
@@ -136,7 +157,7 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
-    static TestContentObserver getTestContentObserver() {
+    public static TestContentObserver getTestContentObserver() {
         return TestContentObserver.getTestContentObserver();
     }
 }
