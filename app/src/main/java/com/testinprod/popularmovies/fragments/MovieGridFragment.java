@@ -1,79 +1,96 @@
 package com.testinprod.popularmovies.fragments;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
-import com.testinprod.popularmovies.BuildConfig;
 import com.testinprod.popularmovies.MovieAdapter;
 import com.testinprod.popularmovies.R;
-import com.testinprod.popularmovies.activities.MovieDetailActivity;
-import com.testinprod.popularmovies.api.TheMovieDBApi;
-import com.testinprod.popularmovies.api.TheMovieDBConsts;
-import com.testinprod.popularmovies.models.MovieDiscovery;
-import com.testinprod.popularmovies.models.MovieModel;
+import com.testinprod.popularmovies.data.MovieContract;
+import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
-
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieGridFragment extends Fragment implements Callback<MovieDiscovery> {
+public class MovieGridFragment
+        extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private static final String MOVIE_LIST = "movies.list";
 
-    @Override
-    public void success(MovieDiscovery movieDiscovery, Response response) {
-        ArrayList<MovieModel> movieModels = null;
-        if(movieDiscovery != null)
-        {
-            movieModels = new ArrayList<>(movieDiscovery.getResults());
-        }
-        if(movieModels == null)
-        {
-            movieModels = new ArrayList<>();
-        }
-        Timber.v("Movies Loaded: " + movieModels.size());
-        if(movieModels.size() == 0) {
-            Toast.makeText(getActivity(), "No movies found, please try a different search", Toast.LENGTH_LONG).show();
-        }
-        mMovieGrid.setAdapter(new MovieAdapter(getActivity(), movieModels));
-    }
+    private static final String[] MOVIE_COLUMNS = {
+            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_TITLE
+    };
 
-    @Override
-    public void failure(RetrofitError error) {
-        Log.e(LOG_TAG, "Failure to load: " + error.toString());
-    }
+    public static final int COL_ID = 0;
+    public static final int COL_MOVIE_ID = 1;
+    public static final int COL_POSTER_PATH = 2;
+    public static final int COL_TITLE = 3;
+
+    private static final int MOVIE_LOADER = 1;
 
     private static final String MOVIE_SORT = "movies.sort";
     private GridView mMovieGrid;
     private String mSortKey;
-    private TheMovieDBApi mMovieDBApi;
+    private MovieAdapter mMovieAdapter;
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(id == MOVIE_LOADER)
+        {
+            // TODO Change sorting to be by SQL columns
+            return new CursorLoader(
+                    getActivity(),
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    MOVIE_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+        }
+        return null;
+    }
+
+    @DebugLog
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mMovieAdapter.swapCursor(data);
+    }
+
+    @DebugLog
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(MOVIE_SORT, mSortKey);
-        MovieAdapter adapter = (MovieAdapter) mMovieGrid.getAdapter();
-        outState.putParcelable(MOVIE_LIST, Parcels.wrap(adapter.getMovies()));
+        // TODO: Retain state on orientation change
+//        outState.putString(MOVIE_SORT, mSortKey);
+//        MovieAdapter adapter = (MovieAdapter) mMovieGrid.getAdapter();
+//        outState.putParcelable(MOVIE_LIST, Parcels.wrap(adapter.getMovies()));
     }
 
     public MovieGridFragment() {
@@ -96,26 +113,27 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
 
-        if(savedInstanceState != null)
-        {
-            Timber.v("Restoring state");
-            ArrayList<MovieModel> movies = Parcels.unwrap(savedInstanceState.getParcelable(MOVIE_LIST));
-            MovieAdapter adapter = new MovieAdapter(getActivity(), movies);
-            mMovieGrid.setAdapter(adapter);
-            mSortKey = savedInstanceState.getString(MOVIE_SORT);
-        }
-        else
+        if(savedInstanceState == null)
         {
             refreshGrid();
         }
 
+        mMovieAdapter = new MovieAdapter(getActivity(), null, 0);
+        mMovieGrid.setAdapter(mMovieAdapter);
         mMovieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MovieModel movie = (MovieModel) mMovieGrid.getItemAtPosition(position);
-                Intent details = new Intent(getActivity(), MovieDetailActivity.class);
-                details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
-                startActivity(details);
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if(cursor != null)
+                {
+                    // TODO: Re-enable when the details use the content adapter
+                    Timber.d("Movie to view details: " + cursor.getInt(COL_MOVIE_ID));
+//                    MovieModel movie = (MovieModel) mMovieGrid.getItemAtPosition(position);
+//                    Intent details = new Intent(getActivity(), MovieDetailActivity.class);
+//                    details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, Parcels.wrap(movie));
+//                    startActivity(details);
+                }
+
             }
         });
 
@@ -124,27 +142,7 @@ public class MovieGridFragment extends Fragment implements Callback<MovieDiscove
 
     private void refreshGrid()
     {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortKey = preferences.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-        sortKey += "." + preferences.getString(getString(R.string.pref_sort_dir_key), getString(R.string.pref_sort_dir_default));
-
-        Timber.v("Current: " + mSortKey + ", New: " + sortKey);
-        if(sortKey.equals(mSortKey))
-        {
-            Timber.v("Sorting hasn't changed, skipping refresh");
-            return;
-        }
-        mSortKey = sortKey;
-
-        if( mMovieDBApi == null) {
-            RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(TheMovieDBConsts.API_URL)
-                    .build();
-
-            mMovieDBApi = restAdapter.create(TheMovieDBApi.class);
-        }
-
-        mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, mSortKey, this);
+        MovieSyncAdapter.syncDiscoveredMovies(getActivity());
 
     }
 }
