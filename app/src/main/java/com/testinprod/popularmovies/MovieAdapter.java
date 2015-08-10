@@ -12,17 +12,12 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.fragments.MovieGridFragment;
-import com.testinprod.popularmovies.models.MovieModel;
-
-import java.util.ArrayList;
 
 /**
  * Created by Tim on 7/8/2015.
  */
 public class MovieAdapter extends CursorAdapter {
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
-    private Context mContext;
-    private ArrayList<MovieModel> mMovieModels;
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -41,7 +36,7 @@ public class MovieAdapter extends CursorAdapter {
         {
             viewHolder.noPosterView.setVisibility(View.GONE);
             viewHolder.posterView.setVisibility(View.VISIBLE);
-            Picasso.with(mContext)
+            Picasso.with(context)
                     .load(TheMovieDBConsts.POSTER_BASE_URL + posterPath)
                     .placeholder(R.drawable.movie_board)
                     .into(viewHolder.posterView);
