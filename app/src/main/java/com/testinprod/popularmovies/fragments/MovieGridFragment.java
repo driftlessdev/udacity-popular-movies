@@ -1,8 +1,10 @@
 package com.testinprod.popularmovies.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -30,7 +32,6 @@ public class MovieGridFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
-    private static final String MOVIE_LIST = "movies.list";
 
     private static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,
@@ -51,14 +52,41 @@ public class MovieGridFragment
     private String mSortKey;
     private MovieAdapter mMovieAdapter;
 
+    private String getCurrentSort()
+    {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortKey = preferences.getString(getActivity().getString(R.string.pref_sort_key), getActivity().getString(R.string.pref_sort_default));
+        sortKey += "." + preferences.getString(getActivity().getString(R.string.pref_sort_dir_key), getActivity().getString(R.string.pref_sort_dir_default));
+        return sortKey;
+    }
+
+    public void onPreferencesChanges()
+    {
+        String sortKey = getCurrentSort();
+        if(sortKey.equals(mSortKey))
+        {
+            Timber.v("Sorting hasn't changed, skipping refresh");
+            return;
+        }
+        mSortKey = sortKey;
+
+        discoverMovies();
+        // Fire up the new loader
+        Bundle args = new Bundle();
+        args.putString(MOVIE_SORT, mSortKey);
+        getLoaderManager().restartLoader(MOVIE_LOADER, args, this);
+
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(id == MOVIE_LOADER)
         {
+            String sortKey = args.getString(MOVIE_SORT);
             // TODO Change sorting to be by SQL columns
             return new CursorLoader(
                     getActivity(),
-                    MovieContract.MovieEntry.CONTENT_URI,
+                    MovieContract.MovieEntry.buildMovieDiscovery(sortKey),
                     MOVIE_COLUMNS,
                     null,
                     null,
@@ -81,26 +109,26 @@ public class MovieGridFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        Bundle args = new Bundle();
+        args.putString(MOVIE_SORT, getCurrentSort());
+        getLoaderManager().initLoader(MOVIE_LOADER, args, this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // TODO: Retain state on orientation change
-//        outState.putString(MOVIE_SORT, mSortKey);
-//        MovieAdapter adapter = (MovieAdapter) mMovieGrid.getAdapter();
-//        outState.putParcelable(MOVIE_LIST, Parcels.wrap(adapter.getMovies()));
+        outState.putString(MOVIE_SORT, mSortKey);
     }
 
     public MovieGridFragment() {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        Timber.v("onStart");
-        refreshGrid();
+    public void onResume() {
+        super.onResume();
+        Timber.v("onResume");
+        onPreferencesChanges();
     }
 
     @Override
@@ -113,9 +141,9 @@ public class MovieGridFragment
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
         mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
 
-        if(savedInstanceState == null)
+        if(savedInstanceState != null)
         {
-            refreshGrid();
+            mSortKey = savedInstanceState.getString(MOVIE_SORT);
         }
 
         mMovieAdapter = new MovieAdapter(getActivity(), null, 0);
@@ -138,9 +166,10 @@ public class MovieGridFragment
         return rootView;
     }
 
-    private void refreshGrid()
+    private void discoverMovies()
     {
-        MovieSyncAdapter.syncDiscoveredMovies(getActivity());
+        // Refresh data
+        MovieSyncAdapter.syncDiscoveredMovies(getActivity(), mSortKey);
 
     }
 }

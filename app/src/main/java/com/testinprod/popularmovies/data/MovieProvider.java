@@ -116,7 +116,7 @@ public class MovieProvider extends ContentProvider {
                 }
                 builder.setTables(MovieEntry.TABLE_NAME);
                 builder.setProjectionMap(sMovieProjection);
-                Timber.v("Query for specific movie: " + idCol + " = " + id);
+                Timber.d("Query for specific movie: " + idCol + " = " + id);
                 builder.appendWhere(idCol + " = " + id);
                 break;
 
@@ -352,7 +352,7 @@ public class MovieProvider extends ContentProvider {
                 {
                     where += " AND " + selection;
                 }
-                Timber.v("Update conditions: " + where, values);
+                Timber.d("Update conditions: " + where, values);
                 updated = db.update(
                         MovieEntry.TABLE_NAME,
                         values,

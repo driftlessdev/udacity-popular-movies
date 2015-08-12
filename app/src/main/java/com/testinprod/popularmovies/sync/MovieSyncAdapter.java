@@ -9,11 +9,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
-import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBApi;
@@ -33,6 +32,8 @@ import timber.log.Timber;
  * Created by Tim on 8/9/2015.
  */
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
+    private static String EXTRA_SORT = "sortkey";
+
     private TheMovieDBApi mMovieDBApi;
 
     public MovieSyncAdapter(Context context, boolean autoInitialize)
@@ -45,9 +46,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String sortKey = preferences.getString(getContext().getString(R.string.pref_sort_key), getContext().getString(R.string.pref_sort_default));
-        sortKey += "." + preferences.getString(getContext().getString(R.string.pref_sort_dir_key), getContext().getString(R.string.pref_sort_dir_default));
+        String sortKey = extras.getString(EXTRA_SORT);
+        if(TextUtils.isEmpty(sortKey))
+        {
+            sortKey = getContext().getString(R.string.pref_sort_default) + "." + getContext().getString(R.string.pref_sort_dir_default);
+        }
 
         if( mMovieDBApi == null) {
             RestAdapter restAdapter = new RestAdapter.Builder()
@@ -125,11 +128,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @DebugLog
-    public static void syncDiscoveredMovies(Context context)
+    public static void syncDiscoveredMovies(Context context, String sorting)
     {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        bundle.putString(EXTRA_SORT, sorting);
         ContentResolver.requestSync(getSyncAccount(context), context.getString(R.string.sync_account_type), bundle);
     }
 
