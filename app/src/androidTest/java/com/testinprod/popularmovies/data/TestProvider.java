@@ -103,6 +103,58 @@ public class TestProvider extends AndroidTestCase {
 
     }
 
+    public void testDiscoveryInsert()
+    {
+        ContentValues values = TestUtilities.createDiscoveryValues();
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MovieContract.DiscoverEntry.CONTENT_URI, true, tco);
+        Uri discoverUri = mContext.getContentResolver().insert(MovieContract.DiscoverEntry.CONTENT_URI, values);
+
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long id = ContentUris.parseId(discoverUri);
+
+        assertTrue(id != -1);
+
+        validateSingleDiscovery(id, values);
+
+        ContentValues replace = TestUtilities.createDiscoveryValues();
+        replace.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, 5386);
+        discoverUri = mContext.getContentResolver().insert(MovieContract.DiscoverEntry.CONTENT_URI, replace);
+        long replaceId = ContentUris.parseId(discoverUri);
+
+        assertTrue(replaceId != -1);
+
+        validateSingleDiscovery(replaceId, replace);
+    }
+
+    public void testDiscoverUpdate()
+    {
+        ContentValues values = TestUtilities.createDiscoveryValues();
+        Uri uri = mContext.getContentResolver().insert(MovieContract.DiscoverEntry.CONTENT_URI, values);
+        long id = ContentUris.parseId(uri);
+
+        assertTrue(id != -1);
+
+        ContentValues updated = TestUtilities.createDiscoveryValues();
+        updated.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, 5386);
+
+        Cursor cursor = mContext.getContentResolver().query(MovieContract.DiscoverEntry.CONTENT_URI, null, null, null, null);
+
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        cursor.registerContentObserver(tco);
+
+        int count = mContext.getContentResolver().update(uri, updated, null, null);
+        assertEquals(count, 1);
+
+        tco.waitForNotificationOrFail();
+        cursor.unregisterContentObserver(tco);
+
+        cursor = mContext.getContentResolver().query(uri, null,null, null, null);
+        TestUtilities.validateCursor("Update discovery failed", cursor, updated);
+    }
+
     public void testMovieUpdate()
     {
         ContentValues values = TestUtilities.createMovieValues();
@@ -267,6 +319,33 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("Error: Movie single external ID query for " + singleMovie.toString() + " did not match expected results", cursor, values);
+    }
+
+    private void validateSingleDiscovery(long discoveryId, ContentValues values)
+    {
+        // Validate through read all
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.DiscoverEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("Error: Discovery query did not match expected results", cursor, values);
+
+        // Try getting a single discovery
+        Uri discoverUri = MovieContract.DiscoverEntry.buildDiscoverUri(discoveryId);
+
+        cursor = mContext.getContentResolver().query(
+                discoverUri,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("Error: Discovery single query did not match expected results", cursor, values);
     }
 
 

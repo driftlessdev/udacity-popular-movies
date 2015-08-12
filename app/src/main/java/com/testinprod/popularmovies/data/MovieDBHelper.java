@@ -41,13 +41,22 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL);";
 
+        final String SQL_CREATE_DISCOVERY_TABLE = "CREATE TABLE " + MovieContract.DiscoverEntry.TABLE_NAME + " (" +
+                MovieContract.DiscoverEntry._ID + " INTEGER PRIMARY KEY," +
+                MovieContract.DiscoverEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL," +
+                MovieContract.DiscoverEntry.COLUMN_SORTING + " TEXT NOT NULL," +
+                MovieContract.DiscoverEntry.COLUMN_ORDER + " INTEGER NOT NULL," +
+                "UNIQUE(" + MovieContract.DiscoverEntry.COLUMN_SORTING + ", " + MovieContract.DiscoverEntry.COLUMN_ORDER + ") ON CONFLICT REPLACE);";
+
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
+        db.execSQL(SQL_CREATE_DISCOVERY_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.DiscoverEntry.TABLE_NAME);
         onCreate(db);
     }
 }
