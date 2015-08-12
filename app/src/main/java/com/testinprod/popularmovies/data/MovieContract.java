@@ -117,6 +117,11 @@ public class MovieContract {
         {
             return CONTENT_URI.buildUpon().appendPath(Long.toString(id)).appendPath("byExtId").build();
         }
+
+        public static Uri buildMovieDiscovery(String sortType)
+        {
+            return CONTENT_DISCOVER_MOVIES_URI.buildUpon().appendPath(sortType).build();
+        }
     }
 
     // Table holds the sorting results from the discovery API call. As we don't have the entire movie

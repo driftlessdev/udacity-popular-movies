@@ -138,11 +138,11 @@ public class MovieProvider extends ContentProvider {
 
             case MOVIE_DISCOVERY:
                 builder.setTables(MovieEntry.TABLE_NAME +
-                                " LEFT INNER JOIN " + DiscoverEntry.TABLE_NAME +
+                                " INNER JOIN " + DiscoverEntry.TABLE_NAME +
                                 " ON " + MovieEntry.FULL_MOVIE_ID + " = " + DiscoverEntry.FULL_MOVIE_ID
                 );
                 builder.setProjectionMap(sMovieProjection);
-                builder.appendWhere(DiscoverEntry.FULL_SORTING + " = " + uri.getLastPathSegment());
+                builder.appendWhere(DiscoverEntry.FULL_SORTING + " = '" + uri.getLastPathSegment() +"'");
                 if(TextUtils.isEmpty(sortOrder))
                 {
                     sortOrder = DiscoverEntry.FULL_ORDER + " ASC";

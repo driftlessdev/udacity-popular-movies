@@ -214,6 +214,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     private static final int BULK_INSERT_COUNT = 10;
+    private static final String TEST_SORT_TYPE = "test.desc";
     private static ContentValues[] createBulkMovies(){
         ContentValues[] movies = new ContentValues[BULK_INSERT_COUNT];
 
@@ -262,6 +263,25 @@ public class TestProvider extends AndroidTestCase {
         cursor.close();
     }
 
+    public void testDiscoverMovies()
+    {
+        testBulkDiscoveryInsert();
+        testBulkInsert();
+
+        Cursor cursor = mContext.getContentResolver().query(MovieContract.MovieEntry.buildMovieDiscovery(TEST_SORT_TYPE), null, null, null, null);
+
+        assertEquals(cursor.getCount(), BULK_INSERT_COUNT);
+
+        // Movies should come back in reverse ID order
+        int i;
+        int movieIdCol = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+        cursor.moveToFirst();
+        for(i = 0 ; i < BULK_INSERT_COUNT ; cursor.moveToNext(), i++)
+        {
+            assertEquals(cursor.getLong(movieIdCol), BULK_INSERT_COUNT - i - 1);
+        }
+    }
+
     private static ContentValues[] createBulkDiscoveries()
     {
         ContentValues[] entries = new ContentValues[BULK_INSERT_COUNT];
@@ -270,8 +290,8 @@ public class TestProvider extends AndroidTestCase {
         {
             ContentValues values = new ContentValues();
             values.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, i);
-            values.put(MovieContract.DiscoverEntry.COLUMN_SORTING, "test.asc");
-            values.put(MovieContract.DiscoverEntry.COLUMN_ORDER, BULK_INSERT_COUNT - i);
+            values.put(MovieContract.DiscoverEntry.COLUMN_SORTING, TEST_SORT_TYPE);
+            values.put(MovieContract.DiscoverEntry.COLUMN_ORDER, BULK_INSERT_COUNT - i - 1);
             entries[i] = values;
         }
 
