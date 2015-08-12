@@ -23,6 +23,7 @@ public class TestProvider extends AndroidTestCase {
         SQLiteDatabase db = movieDBHelper.getWritableDatabase();
 
         db.delete(MovieContract.MovieEntry.TABLE_NAME, null, null);
+        db.delete(MovieContract.DiscoverEntry.TABLE_NAME, null, null);
         db.close();
     }
 
@@ -155,6 +156,11 @@ public class TestProvider extends AndroidTestCase {
         TestUtilities.validateCursor("Update discovery failed", cursor, updated);
     }
 
+    public void testMovieDiscovery()
+    {
+        ContentValues[] movies = createBulkMovies();
+    }
+
     public void testMovieUpdate()
     {
         ContentValues values = TestUtilities.createMovieValues();
@@ -234,6 +240,42 @@ public class TestProvider extends AndroidTestCase {
         }
 
         return movies;
+    }
+
+    public void testBulkDiscoveryInsert()
+    {
+        ContentValues[] values = createBulkDiscoveries();
+
+        mContext.getContentResolver().bulkInsert(MovieContract.DiscoverEntry.CONTENT_URI, values);
+
+        Cursor cursor = mContext.getContentResolver().query(MovieContract.DiscoverEntry.CONTENT_URI, null, null, null, null);
+
+        assertEquals(cursor.getCount(), BULK_INSERT_COUNT);
+
+        cursor.moveToFirst();
+        for(int i = 0; i < BULK_INSERT_COUNT; i++, cursor.moveToNext())
+        {
+            ContentValues value = values[i];
+            TestUtilities.validateCurrentRecord("Error in bulk insert", cursor, value);
+        }
+
+        cursor.close();
+    }
+
+    private static ContentValues[] createBulkDiscoveries()
+    {
+        ContentValues[] entries = new ContentValues[BULK_INSERT_COUNT];
+
+        for(int i = 0 ;i < BULK_INSERT_COUNT; i++)
+        {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, i);
+            values.put(MovieContract.DiscoverEntry.COLUMN_SORTING, "test.asc");
+            values.put(MovieContract.DiscoverEntry.COLUMN_ORDER, BULK_INSERT_COUNT - i);
+            entries[i] = values;
+        }
+
+        return entries;
     }
 
     public void testBulkInsert()
