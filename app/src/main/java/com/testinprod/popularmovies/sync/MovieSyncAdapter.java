@@ -4,12 +4,15 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
 import com.testinprod.popularmovies.R;
@@ -19,6 +22,7 @@ import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieDiscovery;
 import com.testinprod.popularmovies.models.MovieModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
@@ -55,7 +59,32 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         MovieDiscovery results = mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, sortKey);
 
-        getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, parseMovies(results));
+        ContentValues[] newData = parseMovies(results);
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        int i;
+        for( i = 0 ; i < newData.length ; i++)
+        {
+            ContentProviderOperation newOp = ContentProviderOperation.newInsert(MovieContract.MovieEntry.CONTENT_URI)
+                    .withValues(newData[i])
+                    .build();
+            ops.add(newOp);
+        }
+        newData = parseSorting(results, sortKey);
+        for( i = 0 ; i < newData.length ; i++)
+        {
+            ContentProviderOperation newOp = ContentProviderOperation.newInsert(MovieContract.DiscoverEntry.CONTENT_URI)
+                    .withValues(newData[i])
+                    .build();
+            ops.add(newOp);
+        }
+
+        try{
+            getContext().getContentResolver().applyBatch(MovieContract.CONTENT_AUTHORITY, ops);
+        }
+        catch (OperationApplicationException|RemoteException e)
+        {
+            Timber.e(e, "Error syncing movie discovery");
+        }
 
         Timber.v("Inserted movies: " + results.getResults().size());
     }
@@ -75,6 +104,24 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         return results;
 
+    }
+
+    private ContentValues[] parseSorting(MovieDiscovery movieDiscovery, String sorting)
+    {
+        List<MovieModel> movies = movieDiscovery.getResults();
+        ContentValues[] results = new ContentValues[movies.size()];
+
+        for(int i = 0; i < movies.size(); i++)
+        {
+            MovieModel movie = movies.get(i);
+            ContentValues entry = new ContentValues();
+            entry.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, movie.getId());
+            entry.put(MovieContract.DiscoverEntry.COLUMN_ORDER, i);
+            entry.put(MovieContract.DiscoverEntry.COLUMN_SORTING, sorting);
+            results[i] = entry;
+        }
+
+        return results;
     }
 
     @DebugLog
