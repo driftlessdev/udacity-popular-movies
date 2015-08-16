@@ -98,6 +98,23 @@ public class MovieContract {
 
         public static final String ACTION_REPLACE = "__SQL_USE_REPLACE__";
 
+        public static final String[] PROJECTION_ALL = {
+                _ID
+                ,COLUMN_MOVIE_ID
+                ,COLUMN_ADULT
+                ,COLUMN_BACKDROP_PATH
+                ,COLUMN_ORIGINAL_LANGUAGE
+                ,COLUMN_ORIGINAL_TITLE
+                ,COLUMN_OVERVIEW
+                ,COLUMN_RELEASE_DATE
+                ,COLUMN_POSTER_PATH
+                ,COLUMN_POPULARITY
+                ,COLUMN_TITLE
+                ,COLUMN_VIDEO
+                ,COLUMN_VOTE_AVERAGE
+                ,COLUMN_VOTE_COUNT
+        };
+
         public static String getExternalIdFromUri(Uri uri)
         {
             return uri.getPathSegments().get(1);
@@ -152,6 +169,13 @@ public class MovieContract {
         public static final String COLUMN_ORDER = "sort_order";
         public static final String FULL_ORDER = TABLE_NAME + "." + COLUMN_ORDER;
 
+        public static final String[] PROJECTION_ALL = {
+                _ID,
+                COLUMN_MOVIE_ID,
+                COLUMN_SORTING,
+                COLUMN_ORDER
+        };
+
         public static String getIdFromUri(Uri uri)
         {
 
@@ -162,5 +186,79 @@ public class MovieContract {
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+    }
+
+    public static final class VideoEntry implements BaseColumns
+    {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_VIDEO).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_VIDEO;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_VIDEO;
+
+        public static final String TABLE_NAME = "video";
+
+        // API_ID - String
+        public static final String COLUMN_API_ID = "api_id";
+
+        // String
+        public static final String COLUMN_KEY = "key";
+
+        // String
+        public static final String COLUMN_NAME = "name";
+
+        // String
+        public static final String COLUMN_SITE = "site";
+
+        // Int
+        public static final String COLUMN_SIZE = "size";
+
+        // String
+        public static final String COLUMN_TYPE = "video_type";
+
+        public static final String[] PROJECTION_ALL = {
+                _ID
+                ,COLUMN_API_ID
+                ,COLUMN_KEY
+                ,COLUMN_NAME
+                ,COLUMN_SITE
+                ,COLUMN_SIZE
+                ,COLUMN_TYPE
+        };
+
+    }
+
+    public static final class ReviewEntry implements BaseColumns
+    {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+
+        public static final String TABLE_NAME = "reviiew";
+
+        // API_ID - String
+        public static final String COLUMN_API_ID = "api_id";
+
+        // String
+        public static final String COLUMN_AUTHOR = "author";
+
+        // String
+        public static final String COLUMN_CONTENT = "content";
+
+        // String
+        public static final String COLUMN_URL = "url";
+
+        public static final String[] PROJECTION_ALL = {
+                _ID
+                ,COLUMN_API_ID
+                ,COLUMN_AUTHOR
+                ,COLUMN_CONTENT
+                ,COLUMN_URL
+        };
+
     }
 }

@@ -53,6 +53,28 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
+    public static ContentValues createReviewValues()
+    {
+        ContentValues values = new ContentValues();
+        values.put(MovieContract.ReviewEntry.COLUMN_API_ID, "559238f89251415df80000aa");
+        values.put(MovieContract.ReviewEntry.COLUMN_AUTHOR, "Review Author");
+        values.put(MovieContract.ReviewEntry.COLUMN_CONTENT, "Ye on properly handsome returned throwing am no whatever. In without wishing he of picture no exposed talking minutes. Curiosity continual belonging offending so explained it exquisite. Do remember to followed yourself material mr recurred carriage. High drew west we no or at john. About or given on witty event. Or sociable up material bachelor bringing landlord confined. Busy so many in hung easy find well up. So of exquisite my an explained remainder. Dashwood denoting securing be on perceive my laughing so. ");
+        values.put(MovieContract.ReviewEntry.COLUMN_URL, "http://udacity.com");
+        return values;
+    }
+
+    public static ContentValues createVideoValues()
+    {
+        ContentValues values = new ContentValues();
+        values.put(MovieContract.VideoEntry.COLUMN_API_ID, "5576eac192514111e4001b03");
+        values.put(MovieContract.VideoEntry.COLUMN_KEY, "lP-sUUUfamw");
+        values.put(MovieContract.VideoEntry.COLUMN_NAME, "Official Trailer 3");
+        values.put(MovieContract.VideoEntry.COLUMN_SITE, "YouTube");
+        values.put(MovieContract.VideoEntry.COLUMN_SIZE, 720);
+        values.put(MovieContract.VideoEntry.COLUMN_TYPE, "Trailer");
+        return values;
+    }
+
     public static ContentValues createDiscoveryValues()
     {
         ContentValues discoveryValues = new ContentValues();

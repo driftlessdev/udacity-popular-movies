@@ -48,6 +48,24 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MovieContract.DiscoverEntry.COLUMN_ORDER + " INTEGER NOT NULL," +
                 "UNIQUE(" + MovieContract.DiscoverEntry.COLUMN_SORTING + ", " + MovieContract.DiscoverEntry.COLUMN_ORDER + ") ON CONFLICT REPLACE);";
 
+        final String SQL_CREATE_VIDEO_TABLE = "CREATE TABLE " + MovieContract.VideoEntry.TABLE_NAME + " (" +
+                MovieContract.VideoEntry._ID +  " INTEGER PRIMARY KEY," +
+                MovieContract.VideoEntry.COLUMN_API_ID + " TEXT NOT NULL," +
+                MovieContract.VideoEntry.COLUMN_KEY + " TEXT NOT NULL," +
+                MovieContract.VideoEntry.COLUMN_NAME + " TEXT NOT NULL," +
+                MovieContract.VideoEntry.COLUMN_SITE + " TEXT NOT NULL," +
+                MovieContract.VideoEntry.COLUMN_SIZE + " INTEGER NOT NULL, " +
+                MovieContract.VideoEntry.COLUMN_TYPE + " TEXT NOT NULL);";
+
+        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + MovieContract.ReviewEntry.TABLE_NAME + " (" +
+                MovieContract.ReviewEntry._ID +  " INTEGER PRIMARY KEY," +
+                MovieContract.ReviewEntry.COLUMN_API_ID + " TEXT NOT NULL," +
+                MovieContract.ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL," +
+                MovieContract.ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL," +
+                MovieContract.ReviewEntry.COLUMN_URL + " TEXT NOT NULL);";
+
+        db.execSQL(SQL_CREATE_REVIEW_TABLE);
+        db.execSQL(SQL_CREATE_VIDEO_TABLE);
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_DISCOVERY_TABLE);
 
@@ -57,6 +75,8 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + MovieContract.DiscoverEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.ReviewEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.VideoEntry.TABLE_NAME);
         onCreate(db);
     }
 }
