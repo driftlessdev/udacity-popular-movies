@@ -202,6 +202,9 @@ public class MovieContract {
         // API_ID - String
         public static final String COLUMN_API_ID = "api_id";
 
+        // INTEGER - ID of the movie from the movie database, used in API calls
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+
         // String
         public static final String COLUMN_KEY = "key";
 
@@ -220,6 +223,7 @@ public class MovieContract {
         public static final String[] PROJECTION_ALL = {
                 _ID
                 ,COLUMN_API_ID
+                ,COLUMN_MOVIE_ID
                 ,COLUMN_KEY
                 ,COLUMN_NAME
                 ,COLUMN_SITE
@@ -243,6 +247,9 @@ public class MovieContract {
         // API_ID - String
         public static final String COLUMN_API_ID = "api_id";
 
+        // INTEGER - ID of the movie from the movie database, used in API calls
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+
         // String
         public static final String COLUMN_AUTHOR = "author";
 
@@ -255,6 +262,7 @@ public class MovieContract {
         public static final String[] PROJECTION_ALL = {
                 _ID
                 ,COLUMN_API_ID
+                ,COLUMN_MOVIE_ID
                 ,COLUMN_AUTHOR
                 ,COLUMN_CONTENT
                 ,COLUMN_URL
