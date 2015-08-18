@@ -264,7 +264,7 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
 
-        public static final String TABLE_NAME = "reviiew";
+        public static final String TABLE_NAME = "review";
 
         // API_ID - String
         public static final String COLUMN_API_ID = "api_id";

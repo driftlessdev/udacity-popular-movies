@@ -26,6 +26,7 @@ import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieModel;
+import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
 import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
@@ -111,6 +112,9 @@ public class MovieDetailFragment extends Fragment {
             dateText = SimpleDateFormat.getDateInstance().format(releaseDate);
         }
         release.setText(dateText);
+
+        MovieSyncAdapter.syncMovieDetails(getActivity(), movieId);
+
         return rootView;
     }
 
