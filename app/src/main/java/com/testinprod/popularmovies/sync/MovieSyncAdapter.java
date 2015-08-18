@@ -150,7 +150,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     {
         if(TextUtils.isEmpty(sortKey))
         {
-            sortKey = getContext().getString(R.string.pref_sort_default) + "." + getContext().getString(R.string.pref_sort_dir_default);
+            sortKey = getContext().getString(R.string.pref_sort_default);
         }
 
         MovieDiscovery results = mMovieDBApi.discoverMovies(TheMovieDBConsts.API_KEY, sortKey);

@@ -55,9 +55,7 @@ public class MovieGridFragment
     private String getCurrentSort()
     {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortKey = preferences.getString(getActivity().getString(R.string.pref_sort_key), getActivity().getString(R.string.pref_sort_default));
-        sortKey += "." + preferences.getString(getActivity().getString(R.string.pref_sort_dir_key), getActivity().getString(R.string.pref_sort_dir_default));
-        return sortKey;
+        return preferences.getString(getActivity().getString(R.string.pref_sort_key), getActivity().getString(R.string.pref_sort_default));
     }
 
     public void onPreferencesChanges()

@@ -53,7 +53,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         // Prime the pump
         onSharedPreferenceChanged(preferences, getString(R.string.pref_sort_key));
-        onSharedPreferenceChanged(preferences, getString(R.string.pref_sort_dir_key));
     }
 
 }
