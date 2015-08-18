@@ -44,8 +44,7 @@ public class MovieDetailFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
-    private CardView mHeader;
-    private ImageView mPoster;
+
 
     private static final int MOVIE_LOADER = 1;
     private static final int REVIEW_LOADER = 2;
@@ -93,6 +92,9 @@ public class MovieDetailFragment
     }
     //</editor-fold>
 
+    private CardView mHeader;
+    private ImageView mPoster;
+    private ImageView mBackdrop;
     private ActionBar mBar;
     private MovieModel mMovie;
     private TextView mOverview;
@@ -123,7 +125,7 @@ public class MovieDetailFragment
         mBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         mRating = (TextView) rootView.findViewById(R.id.tvRating);
         mReleaseDate = (TextView) rootView.findViewById(R.id.tvReleaseDate);
-
+        mBackdrop = (ImageView) rootView.findViewById(R.id.ivMovieBackdrop);
 
         Bundle args = getArguments();
         getLoaderManager().initLoader(MOVIE_LOADER, args, this);
@@ -151,9 +153,17 @@ public class MovieDetailFragment
         {
             Picasso.with(getActivity())
                     .load(TheMovieDBConsts.POSTER_BASE_URL + path)
-                    .into(mPoster, new ImageLoadedCallback());
+                    .into(mPoster) ; //, new ImageLoadedCallback());
         } else {
-            setDefaultHeaderColors();
+            //setDefaultHeaderColors();
+        }
+
+        path = mMovie.getBackdropPath();
+        if(path != null && !path.isEmpty())
+        {
+            Picasso.with(getActivity())
+                    .load(TheMovieDBConsts.BACKDROP_BASE_URL + path)
+                    .into(mBackdrop);
         }
 
         mRating.setText(mMovie.getVoteAverage() + "/10");
