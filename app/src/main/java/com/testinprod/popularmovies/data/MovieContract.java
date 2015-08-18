@@ -231,6 +231,28 @@ public class MovieContract {
                 ,COLUMN_TYPE
         };
 
+        public static String getIdFromUri(Uri uri)
+        {
+
+            return uri.getPathSegments().get(1);
+        }
+
+
+        public static String getMovieIdFromUri(Uri uri)
+        {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static Uri buildVideoUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildMovieVideosUrl(long movieId)
+        {
+            return MovieEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).appendPath(PATH_VIDEO).build();
+        }
+
     }
 
     public static final class ReviewEntry implements BaseColumns
@@ -267,6 +289,27 @@ public class MovieContract {
                 ,COLUMN_CONTENT
                 ,COLUMN_URL
         };
+
+        public static String getIdFromUri(Uri uri)
+        {
+
+            return uri.getPathSegments().get(1);
+        }
+
+        public static String getMovieIdFromUri(Uri uri)
+        {
+            return uri.getPathSegments().get(1);
+        }
+
+        public static Uri buildReviewUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildMovieReviewsUrl(long movieId)
+        {
+            return MovieEntry.CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).appendPath(PATH_REVIEW).build();
+        }
 
     }
 }

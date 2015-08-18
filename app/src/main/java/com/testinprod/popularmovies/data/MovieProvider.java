@@ -30,6 +30,13 @@ public class MovieProvider extends ContentProvider {
     private static final int DISCOVERIES = 5;
     private static final int DISCOVERY = 6;
 
+    private static final int REVIEW = 7;
+    private static final int REVIEWS = 8;
+    private static final int MOVIE_REVIEWS = 9;
+    private static final int VIDEO = 10;
+    private static final int VIDEOS = 11;
+    private static final int MOVIE_VIDEOS = 12;
+
     private static final HashMap<String, String> sMovieProjection = buildMovieProjection();
     private static final HashMap<String, String> sDiscoverProjection = buildDiscoverProjection();
 
@@ -47,9 +54,18 @@ public class MovieProvider extends ContentProvider {
 
         uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_DISCOVERY + "/", DISCOVERIES);
         uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_DISCOVERY + "/#", DISCOVERY);
-        // Future URIs
-        // movie/#/reviews
-        // movie/#/videos
+
+        // Reviews
+        // Bulk/Single/For a Movie
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_REVIEW + "/", REVIEWS);
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_REVIEW + "/#", REVIEW);
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIE + "/#/" + MovieContract.PATH_REVIEW, MOVIE_REVIEWS);
+
+        // Videos
+        // Bulk/Single/For a movie
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_VIDEO + "/", VIDEOS);
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_VIDEO + "/#", VIDEO);
+        uriMatcher.addURI(MovieContract.CONTENT_AUTHORITY, MovieContract.PATH_MOVIE + "/#/" + MovieContract.PATH_VIDEO, MOVIE_VIDEOS);
 
         return uriMatcher;
     }
@@ -153,6 +169,26 @@ public class MovieProvider extends ContentProvider {
                 baseUris.add(DiscoverEntry.CONTENT_URI);
                 break;
 
+            case REVIEW:
+                builder.appendWhere(MovieContract.ReviewEntry._ID + " = " + MovieContract.ReviewEntry.getIdFromUri(uri));
+            case REVIEWS:
+                builder.setTables(MovieContract.ReviewEntry.TABLE_NAME);
+                break;
+            case MOVIE_REVIEWS:
+                builder.setTables(MovieContract.ReviewEntry.TABLE_NAME);
+                builder.appendWhere(MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = " + MovieContract.ReviewEntry.getMovieIdFromUri(uri));
+                break;
+
+            case VIDEO:
+                builder.appendWhere(MovieContract.VideoEntry._ID + " = " + MovieContract.VideoEntry.getIdFromUri(uri));
+            case VIDEOS:
+                builder.setTables(MovieContract.VideoEntry.TABLE_NAME);
+                break;
+            case MOVIE_VIDEOS:
+                builder.setTables(MovieContract.VideoEntry.TABLE_NAME);
+                builder.appendWhere(MovieContract.VideoEntry.COLUMN_MOVIE_ID + " = " + MovieContract.VideoEntry.getMovieIdFromUri(uri));
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown query uri: " + uri);
         }
@@ -183,17 +219,25 @@ public class MovieProvider extends ContentProvider {
         switch (match)
         {
             case MOVIE_INT_ID:
-                return MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_EXT_ID:
                 return MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIES:
+            case MOVIE_DISCOVERY:
                 return MovieEntry.CONTENT_TYPE;
             case DISCOVERIES:
                 return DiscoverEntry.CONTENT_TYPE;
-            case MOVIE_DISCOVERY:
-                return MovieEntry.CONTENT_TYPE;
             case DISCOVERY:
                 return DiscoverEntry.CONTENT_ITEM_TYPE;
+            case REVIEWS:
+            case MOVIE_REVIEWS:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
+            case REVIEW:
+                return MovieContract.ReviewEntry.CONTENT_ITEM_TYPE;
+            case VIDEOS:
+            case MOVIE_VIDEOS:
+                return MovieContract.VideoEntry.CONTENT_TYPE;
+            case VIDEO:
+                return MovieContract.VideoEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
         }
@@ -248,6 +292,33 @@ public class MovieProvider extends ContentProvider {
                 }
 
                 break;
+            case REVIEWS:
+
+                _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, values);
+                if( _id > 0)
+                {
+                    returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
+                }
+                else
+                {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+
+                break;
+            case VIDEOS:
+
+                _id = db.insert(MovieContract.VideoEntry.TABLE_NAME, null, values);
+                if( _id > 0)
+                {
+                    returnUri = MovieContract.VideoEntry.buildVideoUri(_id);
+                }
+                else
+                {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -263,6 +334,7 @@ public class MovieProvider extends ContentProvider {
         String idCol = null;
         String id = null;
         String where = null;
+        String table;
 
         switch (sUriMatcher.match(uri))
         {
@@ -270,55 +342,66 @@ public class MovieProvider extends ContentProvider {
                 idCol = MovieEntry.COLUMN_MOVIE_ID;
                 id = MovieEntry.getExternalIdFromUri(uri);
             case MOVIE_INT_ID:
+                table = MovieEntry.TABLE_NAME;
                 if(idCol == null)
                 {
                     idCol = MovieEntry._ID;
                     id = MovieEntry.getInternalIdFromUri(uri);
                 }
                 where = idCol + " = " + id;
-                if(selection != null && !selection.isEmpty())
-                {
-                    where += " AND " + selection;
-                }
-                deleted = db.delete(
-                        MovieEntry.TABLE_NAME,
-                        where,
-                        selectionArgs
-                );
+
+                break;
+
+            case MOVIES:
+                table = MovieEntry.TABLE_NAME;
                 break;
 
             case DISCOVERY:
                 where = DiscoverEntry.FULL_ID + " = " + DiscoverEntry.getIdFromUri(uri);
-                if(selection != null && !selection.isEmpty())
-                {
-                    where += " AND " + selection;
-                }
-                deleted = db.delete(
-                        DiscoverEntry.TABLE_NAME,
-                        where,
-                        selectionArgs
-                );
-                break;
-
-            case MOVIES:
-                deleted = db.delete(
-                        MovieEntry.TABLE_NAME,
-                        selection,
-                        selectionArgs
-                );
-                break;
-
             case DISCOVERIES:
-                deleted = db.delete(
-                        DiscoverEntry.TABLE_NAME,
-                        selection
-                        ,selectionArgs
-                );
+                table = DiscoverEntry.TABLE_NAME;
+                break;
+
+            case REVIEW:
+                where = MovieContract.ReviewEntry._ID + " = " + MovieContract.ReviewEntry.getIdFromUri(uri);
+            case REVIEWS:
+                table = MovieContract.ReviewEntry.TABLE_NAME;
+                break;
+
+            case MOVIE_REVIEWS:
+                table = MovieContract.ReviewEntry.TABLE_NAME;
+                where = MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = " + MovieContract.ReviewEntry.getMovieIdFromUri(uri);
+                break;
+
+            case VIDEO:
+                where = MovieContract.VideoEntry._ID + " = " + MovieContract.VideoEntry.getIdFromUri(uri);
+            case VIDEOS:
+                table = MovieContract.VideoEntry.TABLE_NAME;
+                break;
+
+            case MOVIE_VIDEOS:
+                table = MovieContract.VideoEntry.TABLE_NAME;
+                where = MovieContract.VideoEntry.COLUMN_MOVIE_ID + " = " + MovieContract.VideoEntry.getMovieIdFromUri(uri);
                 break;
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        if(selection == null || selection.isEmpty())
+        {
+            selection = where;
+        }
+        else if(where != null && !where.isEmpty())
+        {
+            selection += " AND " + where;
+        }
+
+        deleted = db.delete(
+                table,
+                selection,
+                selectionArgs
+        );
 
         if(deleted > 0)
         {
@@ -331,10 +414,12 @@ public class MovieProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
+
         int updated = 0;
         String idCol = null;
         String id = null;
         String where = null;
+        String table;
 
         switch (sUriMatcher.match(uri))
         {
@@ -348,53 +433,47 @@ public class MovieProvider extends ContentProvider {
                     id = MovieEntry.getInternalIdFromUri(uri);
                 }
                 where = idCol + " = " + id;
-                if(selection != null && !selection.isEmpty())
-                {
-                    where += " AND " + selection;
-                }
-                Timber.d("Update conditions: " + where, values);
-                updated = db.update(
-                        MovieEntry.TABLE_NAME,
-                        values,
-                        where,
-                        selectionArgs
-                );
+            case MOVIES:
+                table = MovieEntry.TABLE_NAME;
                 break;
 
             case DISCOVERY:
                 where = DiscoverEntry._ID + " = " + DiscoverEntry.getIdFromUri(uri);
-                if(selection != null && !selection.isEmpty())
-                {
-                    where += " AND " + selection;
-                }
-                updated = db.update(
-                        DiscoverEntry.TABLE_NAME,
-                        values,
-                        where,
-                        selectionArgs
-                );
-                break;
-
-            case MOVIES:
-                updated = db.update(
-                        MovieEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        selectionArgs
-                );
-                break;
-
             case DISCOVERIES:
-                updated = db.update(
-                        DiscoverEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        selectionArgs
-                );
+                table = DiscoverEntry.TABLE_NAME;
                 break;
+
+            case REVIEW:
+                where = MovieContract.ReviewEntry._ID + " = " + MovieContract.ReviewEntry.getIdFromUri(uri);
+            case REVIEWS:
+                table = MovieContract.ReviewEntry.TABLE_NAME;
+                break;
+
+            case VIDEO:
+                where = MovieContract.VideoEntry._ID + " = " + MovieContract.VideoEntry.getIdFromUri(uri);
+            case VIDEOS:
+                table = MovieContract.VideoEntry.TABLE_NAME;
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
+        if(selection == null || selection.isEmpty())
+        {
+            selection = where;
+        }
+        else if(where != null && !where.isEmpty())
+        {
+            selection += " AND " + where;
+        }
+
+        updated = db.update(
+                table,
+                values,
+                selection,
+                selectionArgs
+        );
 
         if(updated > 0)
         {
