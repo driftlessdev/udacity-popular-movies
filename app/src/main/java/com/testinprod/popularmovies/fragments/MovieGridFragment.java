@@ -83,7 +83,7 @@ public class MovieGridFragment
         if(id == MOVIE_LOADER)
         {
             String sortKey = args.getString(MOVIE_SORT);
-            // TODO Change sorting to be by SQL columns
+
             return new CursorLoader(
                     getActivity(),
                     MovieContract.MovieEntry.buildMovieDiscovery(sortKey),
