@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 /**
@@ -25,6 +27,9 @@ public class TestDB extends AndroidTestCase{
 
         HashSet<String> tableNames = new HashSet<>();
         tableNames.add(MovieContract.MovieEntry.TABLE_NAME);
+        tableNames.add(MovieContract.DiscoverEntry.TABLE_NAME);
+        tableNames.add(MovieContract.ReviewEntry.TABLE_NAME);
+        tableNames.add(MovieContract.VideoEntry.TABLE_NAME);
 
         deleteDatabase();
 
@@ -34,56 +39,52 @@ public class TestDB extends AndroidTestCase{
 
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
 
-        assertTrue("Error: coule not get the table names from the DB", c.moveToFirst());
+        assertTrue("Error: could not get the table names from the DB", c.moveToFirst());
 
         do {
             tableNames.remove(c.getString(0));
         } while(c.moveToNext());
 
-        assertTrue("Error: Expected tables found in the database", tableNames.isEmpty());
+        assertTrue("Error: Not all expected tables found", tableNames.isEmpty());
+        c.close();
 
-        c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieEntry.TABLE_NAME + ")", null);
-
-        assertTrue("Error: unable to get information about movie table", c.moveToFirst());
-
-        HashSet<String> movieColumns = new HashSet<>();
-        movieColumns.add(MovieContract.MovieEntry._ID);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_ADULT);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_OVERVIEW);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_POPULARITY);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_TITLE);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_VIDEO);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
-        movieColumns.add(MovieContract.MovieEntry.COLUMN_VOTE_COUNT);
-
-        int columnNameIndex = c.getColumnIndex("name");
-        do {
-            String columnName = c.getString(columnNameIndex);
-            movieColumns.remove(columnName);
-        } while (c.moveToNext());
-
-        assertTrue("Error: database doesn't containe all of the movie columns", movieColumns.isEmpty());
+        validateTableColumns(db, MovieContract.MovieEntry.TABLE_NAME, MovieContract.MovieEntry.PROJECTION_ALL);
+        validateTableColumns(db, MovieContract.DiscoverEntry.TABLE_NAME, MovieContract.DiscoverEntry.PROJECTION_ALL);
+        validateTableColumns(db, MovieContract.VideoEntry.TABLE_NAME, MovieContract.VideoEntry.PROJECTION_ALL);
+        validateTableColumns(db, MovieContract.ReviewEntry.TABLE_NAME, MovieContract.ReviewEntry.PROJECTION_ALL);
         db.close();
 
 
     }
 
-    public void testMovieTable() throws Throwable
+    private void validateTableColumns(SQLiteDatabase db, String tableName, String[] columns)
     {
-        MovieDBHelper dbHelper = new MovieDBHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor c = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
 
-        ContentValues movieValues = TestUtilities.createMovieValues();
+        assertTrue("Error: unable to get information about table", c.moveToFirst());
 
-        long movieId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, movieValues);
+        ArrayList<String> cols = new ArrayList<>(Arrays.asList(columns));
+
+        int columnNameIndex = c.getColumnIndex("name");
+        do {
+            String columnName = c.getString(columnNameIndex);
+            cols.remove(columnName);
+        } while (c.moveToNext());
+
+        assertTrue("Error: table doesn't contain all of the columns", cols.isEmpty());
+        c.close();
+
+    }
+
+    private void testTableReadWrite(SQLiteDatabase db, String tableName, ContentValues values) throws Throwable
+    {
+
+        long entryId = db.insert(tableName, null, values);
+
+        assertTrue("Error inserting entry into " + tableName, entryId != -1);
 
         Cursor cursor = db.query(
-                MovieContract.MovieEntry.TABLE_NAME,
+                tableName,
                 null,
                 null,
                 null,
@@ -91,13 +92,26 @@ public class TestDB extends AndroidTestCase{
                 null,
                 null
         );
-        assertTrue("Error: no rows found from insert", cursor.moveToFirst());
+        assertTrue("Error: no rows found from insert on " + tableName, cursor.moveToFirst());
 
-        TestUtilities.validateCurrentRecord("Failed to validate inserted movie", cursor, movieValues);
+        TestUtilities.validateCurrentRecord("Failed to validate inserted values into " + tableName, cursor, values);
 
-        assertFalse("Error: More than one entry found in the database", cursor.moveToNext());
+        assertFalse("Error: More than one entry found in the table " + tableName, cursor.moveToNext());
 
         cursor.close();
+    }
+
+
+
+    public void testTablesReadWrite() throws Throwable
+    {
+        MovieDBHelper dbHelper = new MovieDBHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        testTableReadWrite(db, MovieContract.MovieEntry.TABLE_NAME, TestUtilities.createMovieValues());
+        testTableReadWrite(db, MovieContract.DiscoverEntry.TABLE_NAME, TestUtilities.createDiscoveryValues());
+        testTableReadWrite(db, MovieContract.ReviewEntry.TABLE_NAME, TestUtilities.createReviewValues());
+        testTableReadWrite(db, MovieContract.VideoEntry.TABLE_NAME, TestUtilities.createVideoValues());
         dbHelper.close();
     }
 }

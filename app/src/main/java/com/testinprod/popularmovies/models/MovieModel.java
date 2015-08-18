@@ -59,6 +59,10 @@ public class MovieModel {
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
+    @Expose
+    private ReviewsPageModel reviews;
+    @Expose
+    private VideosModel videos;
 
     public MovieModel() {
 
@@ -325,6 +329,42 @@ public class MovieModel {
      */
     public void setVoteCount(Integer voteCount) {
         this.voteCount = voteCount;
+    }
+
+    /**
+     *
+     * @return
+     *     The reviews
+     */
+    public ReviewsPageModel getReviews() {
+        return reviews;
+    }
+
+    /**
+     *
+     * @param reviews
+     *     The reviews
+     */
+    public void setReviews(ReviewsPageModel reviews) {
+        this.reviews = reviews;
+    }
+
+    /**
+     *
+     * @return
+     *     The videos
+     */
+    public VideosModel getVideos() {
+        return videos;
+    }
+
+    /**
+     *
+     * @param videos
+     *     The videos
+     */
+    public void setVideos(VideosModel videos) {
+        this.videos = videos;
     }
 
     public ContentValues getContentValues()

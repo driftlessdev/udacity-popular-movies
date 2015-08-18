@@ -1,9 +1,10 @@
 package com.testinprod.popularmovies.api;
 
 import com.testinprod.popularmovies.models.MovieDiscovery;
+import com.testinprod.popularmovies.models.MovieModel;
 
-import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -11,9 +12,9 @@ import retrofit.http.Query;
  */
 public interface TheMovieDBApi {
 
-    @GET("/3/discover/movie")
-    public void discoverMovies(@Query("api_key") String apiKey, @Query("sort_by") String sorting, Callback<MovieDiscovery> callback);
+    @GET("/3/discover/movie?vote_count.gte=100")
+    MovieDiscovery discoverMovies(@Query("api_key") String apiKey, @Query("sort_by") String sorting);
 
-    @GET("/3/discover/movie")
-    public MovieDiscovery discoverMovies(@Query("api_key") String apiKey, @Query("sort_by") String sorting);
+    @GET("/3/movie/{id}?append_to_response=reviews,videos")
+    MovieModel movieDetails(@Path("id") long movieId, @Query("api_key") String apiKey);
 }
