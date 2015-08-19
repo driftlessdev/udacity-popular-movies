@@ -8,8 +8,9 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
-        android:layout_height="192dp"
+        android:layout_height="256dp"
         android:layout_width="match_parent"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -17,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:expandedTitleMarginBottom="32dp"
+            app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -34,53 +35,25 @@
                 android:id="@+id/tbCollapse"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/appBar"
-        android:clickable="true"
-        app:layout_anchorGravity="bottom|right|end"
-        android:src="@drawable/ic_star_border_black_24dp"
-        android:layout_margin="16dp"
-        />
+
+
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="fill_vertical">
-
-
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <android.support.v7.widget.CardView
-                android:background="@color/primary"
-                android:id="@+id/cvDetailHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="2dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="6dp"
-                android:layout_marginEnd="6dp"
-                >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:scaleType="fitCenter"
-                    android:id="@+id/ivMovieHeader"
-                    android:adjustViewBounds="true"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/movie_board"/>
-            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -91,69 +64,73 @@
                 android:layout_marginEnd="6dp"
                 >
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <!-- Idea from http://stackoverflow.com/questions/19983335/android-2-relative-layout-divided-in-half-screen -->
-                    <View
-                        android:id="@+id/centerShim"
-                        android:layout_height="0dp"
+                    <ImageView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/ivMovieHeader"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/movie_board"/>
+
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:visibility="invisible"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                    <TextView
-                        android:id="@+id/tvReleaseTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@id/centerShim"
-                        android:layout_toStartOf="@id/centerShim"
-                        android:textColor="@color/secondary_text"
-                        android:text="@string/released_title"
-                        android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/tvReleaseDate"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:fontFamily="sans-serif-condensed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary_text"/>
 
-                    <TextView
-                        android:id="@+id/tvRatingTitle"
-                        android:layout_toRightOf="@id/centerShim"
-                        android:layout_toEndOf="@id/centerShim"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/secondary_text"
-                        android:text="@string/rating_title"
-                        android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/tvReleaseTitle"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:fontFamily="sans-serif-condensed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondary_text"
+                            android:text="@string/released_title"/>
 
-                    <TextView
-                        android:id="@+id/tvReleaseDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@id/centerShim"
-                        android:layout_toStartOf="@id/centerShim"
-                        android:layout_below="@id/tvReleaseTitle"
-                        android:textColor="@color/primary_text"
-                        android:gravity="center"
-                        />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/tvRatingTitle"
-                        android:layout_toRightOf="@id/centerShim"
-                        android:layout_toEndOf="@id/centerShim"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/primary_text"
-                        android:gravity="center"
-                        />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/tvRating"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:fontFamily="sans-serif-condensed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary_text"/>
+                        <TextView
+                            android:id="@+id/tvRatingTitle"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:fontFamily="sans-serif-condensed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondary_text"
+                            android:text="@string/rating_title"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
@@ -175,13 +152,40 @@
 
             </android.support.v7.widget.CardView>
 
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="6dp"
+                >
+
+                <TextView
+                    android:id="@+id/tvRandom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:text="Facilisis placerat. Dignissim interdum potenti aenean. Consequat vulputate luctus. Ultricies tempor. Morbi nulla sem Tristique, senectus leo turpis dignissim aptent ut ipsum tristique sapien elit. Semper fames class praesent. Ut potenti consequat nostra dictum. Inceptos. Curabitur tristique curae; a vel duis neque blandit dapibus tristique malesuada imperdiet dignissim platea curae; natoque dui mauris mauris tristique tortor habitasse, nostra ridiculus molestie lacus Dis penatibus laoreet gravida potenti convallis. Lacinia vitae vivamus ridiculus sagittis accumsan commodo dis torquent nullam ac arcu cubilia dis, magna nascetur suspendisse dictumst Nibh in volutpat sagittis nunc. Tristique, enim, orci proin, id vulputate tempor venenatis. Dictumst molestie."
+                    android:padding="16dp"/>
+
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
 
 
 
-
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appBar"
+        android:clickable="true"
+        app:layout_anchorGravity="bottom|right|end"
+        android:src="@drawable/ic_star_border_black_24dp"
+        android:layout_margin="16dp"
+        />
 
 
 </android.support.design.widget.CoordinatorLayout>
