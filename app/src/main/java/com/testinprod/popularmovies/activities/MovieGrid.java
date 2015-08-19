@@ -3,10 +3,10 @@ package com.testinprod.popularmovies.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.testinprod.popularmovies.fragments.MovieGridFragment;
 import com.testinprod.popularmovies.R;
 
 
@@ -16,12 +16,11 @@ public class MovieGrid extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_grid);
-        if(savedInstanceState == null)
-        {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.flMovieGrid, new MovieGridFragment())
-                    .commit();
-        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setElevation(0f);
+
     }
 
 
