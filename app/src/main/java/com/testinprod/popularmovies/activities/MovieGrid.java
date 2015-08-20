@@ -18,8 +18,8 @@ public class MovieGrid extends AppCompatActivity {
         setContentView(R.layout.activity_movie_grid);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setElevation(0f);
 
     }
 

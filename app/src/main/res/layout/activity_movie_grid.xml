@@ -2,19 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"/>
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+    </android.support.design.widget.AppBarLayout>
 
     <fragment
         android:id="@+id/fMovieGrid"
+        android:name="com.testinprod.popularmovies.fragments.MovieGridFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.testinprod.popularmovies.fragments.MovieGridFragment"
         tools:context="com.testinprod.popularmovies.fragments.MovieGridFragment"
-        tools:layout="@layout/fragment_movie_grid"/>
-    </LinearLayout>
+        tools:layout="@layout/fragment_movie_grid" />
+</LinearLayout>
