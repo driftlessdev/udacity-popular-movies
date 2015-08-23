@@ -1,6 +1,8 @@
 package com.testinprod.popularmovies.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +50,6 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void setVideos(ArrayList<VideoModel> videos)
     {
         mVideos = videos;
-        Timber.v("New count" + getItemCount());
         notifyDataSetChanged();
     }
 
@@ -184,7 +185,7 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.releaseDate.setText(dateText);
     }
 
-    public static class BasicHolder extends RecyclerView.ViewHolder
+    public class BasicHolder extends RecyclerView.ViewHolder
     {
         public final ImageView movieHeader;
         public final TextView releaseDate;
@@ -201,16 +202,30 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public static class VideoHolder extends RecyclerView.ViewHolder
+    public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         public final TextView videoName;
         public final TextView videoType;
+
+        @Override
+        public void onClick(View view) {
+            int position = getLayoutPosition() - 1;
+            VideoModel videoModel = mVideos.get(position);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("http://www.youtube.com/v/").buildUpon().appendPath(videoModel.getKey()).build());
+            mContext.startActivity(intent);
+
+        }
 
         public VideoHolder(View view)
         {
             super(view);
             videoName = (TextView) view.findViewById(R.id.tvVideoName);
             videoType = (TextView) view.findViewById(R.id.tvVideoType);
+            view.setOnClickListener(this);
         }
+
+
     }
 }
