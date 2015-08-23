@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.fragments.MovieDetailFragment;
 import com.testinprod.popularmovies.fragments.MovieGridFragment;
 
 import timber.log.Timber;
@@ -22,7 +23,9 @@ public class MovieGrid extends AppCompatActivity implements MovieGridFragment.Ca
     public void onItemSelected(long movieId) {
         if(mTwoPane)
         {
-            Timber.v("NYI");
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.flMovieDetails, MovieDetailFragment.newInstance(movieId))
+                    .commit();
         }
         else
         {
@@ -37,12 +40,14 @@ public class MovieGrid extends AppCompatActivity implements MovieGridFragment.Ca
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_grid);
+        Timber.tag(MovieGrid.class.getSimpleName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FrameLayout detailView = (FrameLayout) findViewById(R.id.flMovieDetails);
         mTwoPane = (detailView != null);
+        Timber.v("Two pane mode: " + mTwoPane);
     }
 
 

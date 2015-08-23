@@ -245,7 +245,6 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
-    @DebugLog
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -338,7 +337,6 @@ public class MovieProvider extends ContentProvider {
         return returnUri;
     }
 
-    @DebugLog
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 

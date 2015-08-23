@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize"
+    android:paddingTop="@dimen/detail_top_padding"
     android:descendantFocusability="blocksDescendants"
+    android:id="@+id/clMovieDetails"
     tools:context="com.testinprod.popularmovies.fragments.MovieDetailFragment">
 
     <android.support.design.widget.AppBarLayout
