@@ -1,7 +1,11 @@
 package com.testinprod.popularmovies.fragments;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
@@ -90,6 +95,8 @@ public class MovieDetailFragment
     private TextView mOverview;
     private TextView mReleaseDate;
     private TextView mRating;
+    private FloatingActionButton mFavButton;
+    private boolean mIsFavorite;
 
     public static MovieDetailFragment newInstance(long movieId)
     {
@@ -115,6 +122,18 @@ public class MovieDetailFragment
         mRating = (TextView) rootView.findViewById(R.id.tvRating);
         mReleaseDate = (TextView) rootView.findViewById(R.id.tvReleaseDate);
         mBackdrop = (ImageView) rootView.findViewById(R.id.ivMovieBackdrop);
+        mFavButton = (FloatingActionButton) rootView.findViewById(R.id.fabFavorite);
+
+
+
+        mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleFavoriteClick();
+            }
+        });
+
+
 
         Bundle args = getArguments();
         getLoaderManager().initLoader(MOVIE_LOADER, args, this);
@@ -164,9 +183,76 @@ public class MovieDetailFragment
         }
         mReleaseDate.setText(dateText);
 
+        Cursor cursor = getActivity().getContentResolver().query(
+                MovieContract.DiscoverEntry.CONTENT_URI,
+                null,
+                MovieContract.DiscoverEntry.COLUMN_SORTING + " =  ?"
+                        + " AND " + MovieContract.DiscoverEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{getActivity().getString(R.string.pref_sort_key_favorites), mMovie.getId().toString()},
+                null
+        );
+        mIsFavorite = cursor.moveToFirst();
+        cursor.close();
+
+        setFavoriteIcon();
     }
 
+    private void handleFavoriteClick()
+    {
+        if(mIsFavorite)
+        {
+            int deleted = getActivity().getContentResolver().delete(
+                    MovieContract.DiscoverEntry.CONTENT_URI,
+                    MovieContract.DiscoverEntry.COLUMN_SORTING + " =  ?"
+                            + " AND " + MovieContract.DiscoverEntry.COLUMN_MOVIE_ID + " = ?",
+                    new String[]{getActivity().getString(R.string.pref_sort_key_favorites), mMovie.getId().toString()}
+            );
+            if(deleted > 0)
+            {
+                Toast.makeText(getActivity(),R.string.unfavorited,Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Timber.e("Deleting a favorite resulted in no entries deleted, bad activity state detected.");
+            }
+        }
+        else
+        {
+            ContentValues values = new ContentValues();
+            values.put(MovieContract.DiscoverEntry.COLUMN_SORTING, getActivity().getString(R.string.pref_sort_key_favorites));
+            values.put(MovieContract.DiscoverEntry.COLUMN_ORDER, mMovie.getId());
+            values.put(MovieContract.DiscoverEntry.COLUMN_MOVIE_ID, mMovie.getId());
+            Uri newEntry = getActivity().getContentResolver().insert(
+                    MovieContract.DiscoverEntry.CONTENT_URI,
+                    values
+            );
+            long _id = ContentUris.parseId(newEntry);
+            if(_id > 0)
+            {
+                Toast.makeText(getActivity(),R.string.favorited,Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Timber.e("Setting a favorite resulted in no new entries, bad activity state detected");
+            }
 
+        }
+
+        mIsFavorite = !mIsFavorite;
+        setFavoriteIcon();
+    }
+
+    private void setFavoriteIcon()
+    {
+        if(mIsFavorite)
+        {
+            mFavButton.setImageResource(R.drawable.ic_star_black_24dp);
+        }
+        else
+        {
+            mFavButton.setImageResource(R.drawable.ic_star_border_black_24dp);
+        }
+    }
 
 
 }

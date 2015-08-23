@@ -8,7 +8,7 @@
 
     <string name="pref_sort_key_pop" translatable="false">popularity.desc</string>
     <string name="pref_sort_key_highest_rated" translatable="false">vote_average.desc</string>
-    <string name="pref_sort_key_favorites" translatable="false">vote_average.desc</string>
+    <string name="pref_sort_key_favorites" translatable="false">favorite.desc</string>
 
     <string name="pref_sort_title">Sort by</string>
 
@@ -32,4 +32,7 @@
 
     <string name="content_authority" translatable="false">com.testinprod.popularmovies</string>
     <string name="sync_account_type" translatable="false">@string/content_authority</string>
+
+    <string name="unfavorited">Movie is no longer a favorite. You might have hurt it\'s feelings.</string>
+    <string name="favorited">Movie has been promoted to a favorite.</string>
 </resources>

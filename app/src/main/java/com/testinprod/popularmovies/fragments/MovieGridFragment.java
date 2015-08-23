@@ -167,7 +167,8 @@ public class MovieGridFragment
     private void discoverMovies()
     {
         // Refresh data
-        MovieSyncAdapter.syncDiscoveredMovies(getActivity(), mSortKey);
-
+        if(!mSortKey.equals(getString(R.string.pref_sort_key_favorites))) {
+            MovieSyncAdapter.syncDiscoveredMovies(getActivity(), mSortKey);
+        }
     }
 }
