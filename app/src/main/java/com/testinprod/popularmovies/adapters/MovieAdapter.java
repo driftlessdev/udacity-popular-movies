@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
@@ -32,21 +33,15 @@ public class MovieAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
+        viewHolder.titleView.setVisibility(View.VISIBLE);
+        viewHolder.titleView.setText(cursor.getString(MovieGridFragment.COL_TITLE));
         String posterPath = cursor.getString(MovieGridFragment.COL_POSTER_PATH);
         if(posterPath != null && !posterPath.isEmpty())
         {
-            viewHolder.noPosterView.setVisibility(View.GONE);
-            viewHolder.posterView.setVisibility(View.VISIBLE);
             Picasso.with(context)
                     .load(TheMovieDBConsts.POSTER_BASE_URL + posterPath)
                     .placeholder(R.drawable.movie_board)
-                    .into(viewHolder.posterView);
-        }
-        else
-        {
-            viewHolder.noPosterView.setVisibility(View.VISIBLE);
-            viewHolder.posterView.setVisibility(View.GONE);
-            viewHolder.titleView.setText(cursor.getString(MovieGridFragment.COL_TITLE));
+                    .into(viewHolder.posterView, viewHolder);
         }
     }
 
@@ -54,16 +49,25 @@ public class MovieAdapter extends CursorAdapter {
         super(context, c, flags);
     }
 
-    public static class ViewHolder {
+    public static class ViewHolder implements Callback {
         public final ImageView posterView;
         public final TextView titleView;
-        public final View noPosterView;
+
+        @Override
+        public void onSuccess() {
+            titleView.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onError() {
+
+        }
 
         public ViewHolder(View view)
         {
             posterView = (ImageView) view.findViewById(R.id.ivMoviePoster);
             titleView = (TextView) view.findViewById(R.id.tvTitlePlaceholder);
-            noPosterView = view.findViewById(R.id.rlNoPoster);
         }
     }
+
 }
