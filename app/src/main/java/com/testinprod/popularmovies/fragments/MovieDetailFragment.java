@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -189,6 +190,21 @@ public class MovieDetailFragment
         getLoaderManager().initLoader(REVIEW_LOADER, args, this);
         getLoaderManager().initLoader(VIDEO_LOADER, args, this);
         getLoaderManager().initLoader(MOVIE_LOADER, args, this);
+
+        /* Workaround for bug in AppCompat v23.0.0: https://code.google.com/p/android/issues/detail?id=183166 */
+        ViewGroup appBarLayout = (ViewGroup) rootView.findViewById(R.id.appBar);
+        for (int i = 0; i < appBarLayout.getChildCount(); i++) {
+            View childView = appBarLayout.getChildAt(i);
+            if (!childView.isClickable()) {
+                childView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        return true;
+                    }
+                });
+            }
+        }
+        /* End workaround */
 
         return rootView;
     }
