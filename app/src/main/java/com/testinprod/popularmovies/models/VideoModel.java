@@ -2,6 +2,7 @@
 package com.testinprod.popularmovies.models;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -170,6 +171,36 @@ public class VideoModel {
         values.put(MovieContract.VideoEntry.COLUMN_KEY, getKey());
         values.put(MovieContract.VideoEntry.COLUMN_API_ID, getId());
         return values;
+    }
+
+    public static final String[] ALL_COLUMN_PROJECTION = {
+            MovieContract.VideoEntry._ID,
+            MovieContract.VideoEntry.COLUMN_KEY,
+            MovieContract.VideoEntry.COLUMN_SIZE,
+            MovieContract.VideoEntry.COLUMN_API_ID,
+            MovieContract.VideoEntry.COLUMN_SITE,
+            MovieContract.VideoEntry.COLUMN_NAME,
+            MovieContract.VideoEntry.COLUMN_TYPE,
+            MovieContract.VideoEntry.COLUMN_MOVIE_ID
+    };
+
+    public static final int COL_ID = 0;
+    public static final int COL_KEY = 1;
+    public static final int COL_SIZE = 2;
+    public static final int COL_API_ID = 3;
+    public static final int COL_SITE = 4;
+    public static final int COL_NAME = 5;
+    public static final int COL_TYPE = 6;
+    public static final int COL_MOVIE_ID = 7;
+
+    public VideoModel(Cursor cursor)
+    {
+        setKey(cursor.getString(COL_KEY));
+        setSize(cursor.getInt(COL_SIZE));
+        setId(cursor.getString(COL_API_ID));
+        setSite(cursor.getString(COL_SITE));
+        setName(cursor.getString(COL_NAME));
+        setType(cursor.getString(COL_TYPE));
     }
 
 }

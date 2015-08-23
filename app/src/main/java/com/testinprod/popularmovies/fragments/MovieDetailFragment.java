@@ -12,24 +12,24 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
-import com.testinprod.popularmovies.adapters.VideoAdapter;
+import com.testinprod.popularmovies.adapters.MovieDetailAdapter;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieModel;
+import com.testinprod.popularmovies.models.VideoModel;
 import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -47,19 +47,6 @@ public class MovieDetailFragment
     private static final int MOVIE_LOADER = 1;
     private static final int REVIEW_LOADER = 2;
     private static final int VIDEO_LOADER = 3;
-
-    private static final String[] VIDEO_COLUMNS  = {
-            MovieContract.VideoEntry._ID,
-            MovieContract.VideoEntry.COLUMN_KEY,
-            MovieContract.VideoEntry.COLUMN_NAME,
-            MovieContract.VideoEntry.COLUMN_TYPE
-    };
-
-    public static final int COL_VIDEO_ID = 0;
-    public static final int COL_VIDEO_KEY = 1;
-    public static final int COL_VIDEO_NAME = 2;
-    public static final int COL_VIDEO_TYPE = 3;
-
 
     //<editor-fold desc="Loader Callbacks">
     @Override
@@ -83,7 +70,7 @@ public class MovieDetailFragment
                 return new CursorLoader(
                         getActivity(),
                         MovieContract.VideoEntry.buildMovieVideosUrl(movieId),
-                        MovieDetailFragment.VIDEO_COLUMNS,
+                        VideoModel.ALL_COLUMN_PROJECTION,
                         null,
                         null,
                         null
@@ -102,12 +89,22 @@ public class MovieDetailFragment
             case MOVIE_LOADER:
                 data.moveToFirst();
                 mMovie = new MovieModel(data);
+                mAdapter.setMovie(mMovie);
                 displayMovie();
                 break;
 
             case VIDEO_LOADER:
                 Timber.v("Videos loaded: " + data.getCount());
-                mVideoAdapter.swapCursor(data);
+                ArrayList<VideoModel> videos = new ArrayList<>();
+                if(data.moveToFirst())
+                {
+                    while(data.moveToNext())
+                    {
+                        VideoModel video = new VideoModel(data);
+                        videos.add(video);
+                    }
+                }
+                mAdapter.setVideos(videos);
                 break;
 
         }
@@ -118,23 +115,19 @@ public class MovieDetailFragment
         switch (loader.getId())
         {
             case VIDEO_LOADER:
-                mVideoAdapter.swapCursor(null);
+                mAdapter.setVideos(null);
                 break;
         }
     }
     //</editor-fold>
 
-    private ImageView mPoster;
     private ImageView mBackdrop;
     private ActionBar mBar;
     private MovieModel mMovie;
-    private TextView mOverview;
-    private TextView mReleaseDate;
-    private TextView mRating;
     private FloatingActionButton mFavButton;
     private boolean mIsFavorite;
-    private GridView mVideos;
-    private VideoAdapter mVideoAdapter;
+    private RecyclerView mRecyclerView;
+    private MovieDetailAdapter mAdapter;
 
     public static MovieDetailFragment newInstance(long movieId)
     {
@@ -154,24 +147,21 @@ public class MovieDetailFragment
         Timber.tag(LOG_TAG);
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
-        mPoster = (ImageView) rootView.findViewById(R.id.ivMovieHeader);
-        mOverview = (TextView) rootView.findViewById(R.id.tvOverview);
         mBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        mRating = (TextView) rootView.findViewById(R.id.tvRating);
-        mReleaseDate = (TextView) rootView.findViewById(R.id.tvReleaseDate);
         mBackdrop = (ImageView) rootView.findViewById(R.id.ivMovieBackdrop);
         mFavButton = (FloatingActionButton) rootView.findViewById(R.id.fabFavorite);
-        mVideos = (GridView) rootView.findViewById(R.id.gvVideos);
-        mVideoAdapter = new VideoAdapter(getContext(), null, 0);
-        mVideos.setAdapter(mVideoAdapter);
-        // TODO Launch video on click
-
         mFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handleFavoriteClick();
             }
         });
+
+        // TODO Launch video on click
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvMovieDetails);
+        mAdapter = new MovieDetailAdapter(getContext(), null, null, null);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Bundle args = getArguments();
         long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
@@ -185,8 +175,6 @@ public class MovieDetailFragment
 
     private void displayMovie()
     {
-        mOverview.setText(mMovie.getOverview());
-
         if(mBar != null)
         {
             mBar.setTitle(mMovie.getTitle());
@@ -194,33 +182,13 @@ public class MovieDetailFragment
         }
 
 
-        String path = mMovie.getPosterPath();
-        if(path != null && !path.isEmpty())
-        {
-            Picasso.with(getActivity())
-                    .load(TheMovieDBConsts.POSTER_BASE_URL + path)
-                    .into(mPoster) ; //, new ImageLoadedCallback());
-        }
-
-        path = mMovie.getBackdropPath();
+        String path = mMovie.getBackdropPath();
         if(path != null && !path.isEmpty())
         {
             Picasso.with(getActivity())
                     .load(TheMovieDBConsts.BACKDROP_BASE_URL + path)
                     .into(mBackdrop);
         }
-
-        mRating.setText(mMovie.getVoteAverage() + "/10");
-
-
-        Date releaseDate = mMovie.getReleaseDateClass();
-
-        String dateText = "Unknown";
-        if(releaseDate != null)
-        {
-            dateText = SimpleDateFormat.getDateInstance().format(releaseDate);
-        }
-        mReleaseDate.setText(dateText);
 
         Cursor cursor = getActivity().getContentResolver().query(
                 MovieContract.DiscoverEntry.CONTENT_URI,
