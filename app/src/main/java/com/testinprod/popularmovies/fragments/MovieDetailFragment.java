@@ -94,15 +94,11 @@ public class MovieDetailFragment
                 break;
 
             case VIDEO_LOADER:
-                Timber.v("Videos loaded: " + data.getCount());
                 ArrayList<VideoModel> videos = new ArrayList<>();
-                if(data.moveToFirst())
+                while(data.moveToNext())
                 {
-                    while(data.moveToNext())
-                    {
-                        VideoModel video = new VideoModel(data);
-                        videos.add(video);
-                    }
+                    VideoModel video = new VideoModel(data);
+                    videos.add(video);
                 }
                 mAdapter.setVideos(videos);
                 break;

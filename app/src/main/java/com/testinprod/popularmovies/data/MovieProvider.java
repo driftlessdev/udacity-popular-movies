@@ -251,6 +251,8 @@ public class MovieProvider extends ContentProvider {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         int match = sUriMatcher.match(uri);
         Uri returnUri;
+        ArrayList<Uri> notifyUris = new ArrayList<>();
+        notifyUris.add(uri);
 
         long _id;
         switch(match)
@@ -301,6 +303,7 @@ public class MovieProvider extends ContentProvider {
                 if( _id > 0)
                 {
                     returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
+                    
                 }
                 else
                 {
@@ -314,6 +317,8 @@ public class MovieProvider extends ContentProvider {
                 if( _id > 0)
                 {
                     returnUri = MovieContract.VideoEntry.buildVideoUri(_id);
+                    long movieId = values.getAsLong(MovieContract.VideoEntry.COLUMN_MOVIE_ID);
+                    notifyUris.add(MovieContract.VideoEntry.buildMovieVideosUrl(movieId));
                 }
                 else
                 {
@@ -325,7 +330,9 @@ public class MovieProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        for (Uri notifyUri : notifyUris) {
+            getContext().getContentResolver().notifyChange(notifyUri, null);
+        }
         return returnUri;
     }
 

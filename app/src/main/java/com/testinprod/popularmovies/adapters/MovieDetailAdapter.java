@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import timber.log.Timber;
+
 /**
  * Created by Tim on 8/22/2015.
  */
@@ -36,6 +38,7 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public MovieDetailAdapter(Context context, MovieModel movie, ArrayList<VideoModel> videos, ArrayList<ReviewModel> reviewModels)
     {
+        Timber.tag(MovieDetailAdapter.class.getSimpleName());
         mContext = context;
         mMovie = movie;
         mVideos = videos;
@@ -45,6 +48,7 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void setVideos(ArrayList<VideoModel> videos)
     {
         mVideos = videos;
+        Timber.v("New count" + getItemCount());
         notifyDataSetChanged();
     }
 
