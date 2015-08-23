@@ -16,6 +16,7 @@ import com.testinprod.popularmovies.data.MovieContract.MovieEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 /**
@@ -110,6 +111,7 @@ public class MovieProvider extends ContentProvider {
         return true;
     }
 
+    @DebugLog
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
@@ -243,6 +245,7 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
+    @DebugLog
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -326,6 +329,7 @@ public class MovieProvider extends ContentProvider {
         return returnUri;
     }
 
+    @DebugLog
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 

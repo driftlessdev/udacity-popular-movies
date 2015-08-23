@@ -15,12 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.testinprod.popularmovies.R;
+import com.testinprod.popularmovies.adapters.VideoAdapter;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieModel;
@@ -46,18 +48,42 @@ public class MovieDetailFragment
     private static final int REVIEW_LOADER = 2;
     private static final int VIDEO_LOADER = 3;
 
+    private static final String[] VIDEO_COLUMNS  = {
+            MovieContract.VideoEntry._ID,
+            MovieContract.VideoEntry.COLUMN_KEY,
+            MovieContract.VideoEntry.COLUMN_NAME,
+            MovieContract.VideoEntry.COLUMN_TYPE
+    };
+
+    public static final int COL_VIDEO_ID = 0;
+    public static final int COL_VIDEO_KEY = 1;
+    public static final int COL_VIDEO_NAME = 2;
+    public static final int COL_VIDEO_TYPE = 3;
+
 
     //<editor-fold desc="Loader Callbacks">
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        long movieId;
         switch (id)
         {
             case MOVIE_LOADER:
-                long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
+                movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
                 return new CursorLoader(
                         getActivity(),
                         MovieContract.MovieEntry.buildMovieExternalIDUri(movieId),
                         MovieModel.ALL_COLUMN_PROJECTION,
+                        null,
+                        null,
+                        null
+                );
+
+            case VIDEO_LOADER:
+                movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
+                return new CursorLoader(
+                        getActivity(),
+                        MovieContract.VideoEntry.buildMovieVideosUrl(movieId),
+                        MovieDetailFragment.VIDEO_COLUMNS,
                         null,
                         null,
                         null
@@ -79,12 +105,22 @@ public class MovieDetailFragment
                 displayMovie();
                 break;
 
+            case VIDEO_LOADER:
+                Timber.v("Videos loaded: " + data.getCount());
+                mVideoAdapter.swapCursor(data);
+                break;
+
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        switch (loader.getId())
+        {
+            case VIDEO_LOADER:
+                mVideoAdapter.swapCursor(null);
+                break;
+        }
     }
     //</editor-fold>
 
@@ -97,6 +133,8 @@ public class MovieDetailFragment
     private TextView mRating;
     private FloatingActionButton mFavButton;
     private boolean mIsFavorite;
+    private GridView mVideos;
+    private VideoAdapter mVideoAdapter;
 
     public static MovieDetailFragment newInstance(long movieId)
     {
@@ -123,8 +161,10 @@ public class MovieDetailFragment
         mReleaseDate = (TextView) rootView.findViewById(R.id.tvReleaseDate);
         mBackdrop = (ImageView) rootView.findViewById(R.id.ivMovieBackdrop);
         mFavButton = (FloatingActionButton) rootView.findViewById(R.id.fabFavorite);
-
-
+        mVideos = (GridView) rootView.findViewById(R.id.gvVideos);
+        mVideoAdapter = new VideoAdapter(getContext(), null, 0);
+        mVideos.setAdapter(mVideoAdapter);
+        // TODO Launch video on click
 
         mFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,13 +173,12 @@ public class MovieDetailFragment
             }
         });
 
-
-
         Bundle args = getArguments();
-        getLoaderManager().initLoader(MOVIE_LOADER, args, this);
-
         long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
         MovieSyncAdapter.syncMovieDetails(getActivity(), movieId);
+
+        getLoaderManager().initLoader(VIDEO_LOADER, args, this);
+        getLoaderManager().initLoader(MOVIE_LOADER, args, this);
 
         return rootView;
     }

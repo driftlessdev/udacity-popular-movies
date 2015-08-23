@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.testinprod.popularmovies.MovieAdapter;
+import com.testinprod.popularmovies.adapters.MovieAdapter;
 import com.testinprod.popularmovies.R;
 import com.testinprod.popularmovies.activities.MovieDetailActivity;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
