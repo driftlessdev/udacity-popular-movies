@@ -1,6 +1,5 @@
 package com.testinprod.popularmovies.fragments;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,10 +14,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.testinprod.popularmovies.adapters.MovieAdapter;
 import com.testinprod.popularmovies.R;
-import com.testinprod.popularmovies.activities.MovieDetailActivity;
-import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.adapters.MovieAdapter;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
@@ -153,9 +150,8 @@ public class MovieGridFragment
                 if(cursor != null)
                 {
                     long movieId = cursor.getInt(COL_MOVIE_ID);
-                    Intent details = new Intent(getActivity(), MovieDetailActivity.class);
-                    details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, movieId);
-                    startActivity(details);
+                    Callback callback = (Callback) getActivity();
+                    callback.onItemSelected(movieId);
                 }
 
             }
@@ -170,5 +166,9 @@ public class MovieGridFragment
         if(!mSortKey.equals(getString(R.string.pref_sort_key_favorites))) {
             MovieSyncAdapter.syncDiscoveredMovies(getActivity(), mSortKey);
         }
+    }
+
+    public interface Callback {
+        void onItemSelected(long movieId);
     }
 }

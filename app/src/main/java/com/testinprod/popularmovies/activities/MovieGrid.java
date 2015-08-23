@@ -6,21 +6,43 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.testinprod.popularmovies.R;
+import com.testinprod.popularmovies.api.TheMovieDBConsts;
+import com.testinprod.popularmovies.fragments.MovieGridFragment;
+
+import timber.log.Timber;
 
 
-public class MovieGrid extends AppCompatActivity {
+public class MovieGrid extends AppCompatActivity implements MovieGridFragment.Callback {
     private static final String LOG_TAG = MovieGrid.class.getSimpleName();
+
+    @Override
+    public void onItemSelected(long movieId) {
+        if(mTwoPane)
+        {
+            Timber.v("NYI");
+        }
+        else
+        {
+            Intent details = new Intent(this, MovieDetailActivity.class);
+            details.putExtra(TheMovieDBConsts.EXTRA_MOVIE, movieId);
+            startActivity(details);
+        }
+    }
+
+    private boolean mTwoPane;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_grid);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //toolbar.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
 
+        FrameLayout detailView = (FrameLayout) findViewById(R.id.flMovieDetails);
+        mTwoPane = (detailView != null);
     }
 
 
