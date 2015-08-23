@@ -21,6 +21,7 @@
         android:fontFamily="sans-serif-condensed"
         android:text="Video Name"
         android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/primary_text"
         android:id="@+id/tvVideoName"/>
 
     <TextView

@@ -26,6 +26,7 @@ import com.testinprod.popularmovies.adapters.MovieDetailAdapter;
 import com.testinprod.popularmovies.api.TheMovieDBConsts;
 import com.testinprod.popularmovies.data.MovieContract;
 import com.testinprod.popularmovies.models.MovieModel;
+import com.testinprod.popularmovies.models.ReviewModel;
 import com.testinprod.popularmovies.models.VideoModel;
 import com.testinprod.popularmovies.sync.MovieSyncAdapter;
 
@@ -51,11 +52,10 @@ public class MovieDetailFragment
     //<editor-fold desc="Loader Callbacks">
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        long movieId;
+        long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
         switch (id)
         {
             case MOVIE_LOADER:
-                movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
                 return new CursorLoader(
                         getActivity(),
                         MovieContract.MovieEntry.buildMovieExternalIDUri(movieId),
@@ -66,11 +66,20 @@ public class MovieDetailFragment
                 );
 
             case VIDEO_LOADER:
-                movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
                 return new CursorLoader(
                         getActivity(),
                         MovieContract.VideoEntry.buildMovieVideosUrl(movieId),
                         VideoModel.ALL_COLUMN_PROJECTION,
+                        null,
+                        null,
+                        null
+                );
+
+            case REVIEW_LOADER:
+                return new CursorLoader(
+                        getActivity(),
+                        MovieContract.ReviewEntry.buildMovieReviewsUrl(movieId),
+                        ReviewModel.ALL_COLUMN_PROJECTION,
                         null,
                         null,
                         null
@@ -103,6 +112,16 @@ public class MovieDetailFragment
                 mAdapter.setVideos(videos);
                 break;
 
+            case REVIEW_LOADER:
+                ArrayList<ReviewModel> reviews = new ArrayList<>();
+                while (data.moveToNext())
+                {
+                    ReviewModel review = new ReviewModel(data);
+                    reviews.add(review);
+                }
+                mAdapter.setReviews(reviews);
+                break;
+
         }
     }
 
@@ -112,6 +131,10 @@ public class MovieDetailFragment
         {
             case VIDEO_LOADER:
                 mAdapter.setVideos(null);
+                break;
+
+            case REVIEW_LOADER:
+                mAdapter.setReviews(null);
                 break;
         }
     }
@@ -163,6 +186,7 @@ public class MovieDetailFragment
         long movieId = args.getLong(TheMovieDBConsts.EXTRA_MOVIE);
         MovieSyncAdapter.syncMovieDetails(getActivity(), movieId);
 
+        getLoaderManager().initLoader(REVIEW_LOADER, args, this);
         getLoaderManager().initLoader(VIDEO_LOADER, args, this);
         getLoaderManager().initLoader(MOVIE_LOADER, args, this);
 

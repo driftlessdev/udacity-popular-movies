@@ -303,6 +303,8 @@ public class MovieProvider extends ContentProvider {
                 if( _id > 0)
                 {
                     returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
+                    long movieId = values.getAsLong(MovieContract.ReviewEntry.COLUMN_MOVIE_ID);
+                    notifyUris.add(MovieContract.ReviewEntry.buildMovieReviewsUrl(movieId));
                     
                 }
                 else

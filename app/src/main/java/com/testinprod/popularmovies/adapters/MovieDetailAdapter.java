@@ -79,6 +79,10 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 View videoView = inflater.inflate(R.layout.video_item, parent, false);
                 viewHolder = new VideoHolder(videoView);
                 break;
+            case REVIEW:
+                View reviewHold = inflater.inflate(R.layout.review_item, parent, false);
+                viewHolder = new ReviewHolder(reviewHold);
+                break;
             default:
                 throw new InvalidParameterException("Invalid view type: " + viewType);
         }
@@ -127,6 +131,10 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIDEO:
                 bindVideo((VideoHolder) holder, position);
                 break;
+
+            case REVIEW:
+                bindReview((ReviewHolder) holder, position);
+                break;
         }
     }
 
@@ -146,6 +154,18 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             count += mReviews.size();
         }
         return count;
+    }
+
+    private void bindReview(ReviewHolder holder, int position)
+    {
+        position -= 1;
+        if(mVideos != null)
+        {
+            position -= mVideos.size();
+        }
+        ReviewModel reviewModel = mReviews.get(position);
+        holder.content.setText(reviewModel.getContent());
+        holder.author.setText(reviewModel.getAuthor());
     }
 
     private void bindVideo(VideoHolder holder, int position)
@@ -225,7 +245,18 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             videoType = (TextView) view.findViewById(R.id.tvVideoType);
             view.setOnClickListener(this);
         }
+    }
 
+    public class ReviewHolder extends RecyclerView.ViewHolder
+    {
+        public final TextView author;
+        public final TextView content;
 
+        public ReviewHolder(View view)
+        {
+            super(view);
+            author = (TextView) view.findViewById(R.id.tvReviewerName);
+            content = (TextView) view.findViewById(R.id.tvReviewContent);
+        }
     }
 }
