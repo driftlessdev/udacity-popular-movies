@@ -45,7 +45,6 @@ public class MovieGridFragment
     private static final int MOVIE_LOADER = 1;
 
     private static final String MOVIE_SORT = "movies.sort";
-    private GridView mMovieGrid;
     private String mSortKey;
     private MovieAdapter mMovieAdapter;
 
@@ -140,7 +139,7 @@ public class MovieGridFragment
 
         // TODO: Loading spinner
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
-        mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
+        GridView mMovieGrid = (GridView) rootView.findViewById(R.id.gvMovies);
 
         if(savedInstanceState != null)
         {
@@ -153,8 +152,7 @@ public class MovieGridFragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                if(cursor != null)
-                {
+                if (cursor != null) {
                     long movieId = cursor.getInt(COL_MOVIE_ID);
                     Callback callback = (Callback) getActivity();
                     callback.onItemSelected(movieId);

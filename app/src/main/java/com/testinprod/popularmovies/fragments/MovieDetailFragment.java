@@ -61,7 +61,6 @@ public class MovieDetailFragment
     private MovieModel mMovie;
     private FloatingActionButton mFavButton;
     private boolean mIsFavorite;
-    private RecyclerView mRecyclerView;
     private MovieDetailAdapter mAdapter;
 
     private ShareActionProvider mShareActionProvider;
@@ -224,8 +223,8 @@ public class MovieDetailFragment
                 handleFavoriteClick();
             }
         });
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvMovieDetails);
-        mAdapter = new MovieDetailAdapter(getContext(), null, null, null);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvMovieDetails);
+        mAdapter = new MovieDetailAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

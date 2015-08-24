@@ -37,13 +37,10 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int REVIEW = 1;
     private static final int VIDEO = 2;
 
-    public MovieDetailAdapter(Context context, MovieModel movie, ArrayList<VideoModel> videos, ArrayList<ReviewModel> reviewModels)
+    public MovieDetailAdapter(Context context)
     {
         Timber.tag(MovieDetailAdapter.class.getSimpleName());
         mContext = context;
-        mMovie = movie;
-        mVideos = videos;
-        mReviews = reviewModels;
     }
 
     public void setVideos(ArrayList<VideoModel> videos)

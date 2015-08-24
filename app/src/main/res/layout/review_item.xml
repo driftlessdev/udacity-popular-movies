@@ -18,7 +18,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:text="Review's Name"
             android:textAppearance="?android:textAppearanceMedium"
             android:id="@+id/tvReviewerName"/>
 
@@ -26,7 +25,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:text="Review"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@color/primary_text"
             android:id="@+id/tvReviewContent"/>

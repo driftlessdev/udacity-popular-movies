@@ -341,7 +341,7 @@ public class MovieProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
 
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        int deleted = 0;
+        int deleted;
         String idCol = null;
         String id = null;
         String where = null;
@@ -426,7 +426,7 @@ public class MovieProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
-        int updated = 0;
+        int updated;
         String idCol = null;
         String id = null;
         String where = null;

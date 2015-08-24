@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
-        android:text="Video Name"
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/primary_text"
         android:id="@+id/tvVideoName"/>
@@ -28,7 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
-        android:text="Video Type"
         android:textAppearance="?android:textAppearanceSmall"
         android:id="@+id/tvVideoType"/>
 
