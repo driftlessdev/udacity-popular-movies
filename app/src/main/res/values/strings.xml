@@ -35,4 +35,7 @@
 
     <string name="unfavorited">Movie is no longer a favorite. You might have hurt it\'s feelings.</string>
     <string name="favorited">Movie has been promoted to a favorite.</string>
+
+    <string name="action_share">Share</string>
+    <string name="sharing">%1$s trailer: %2$s</string>
 </resources>

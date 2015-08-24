@@ -3,6 +3,7 @@ package com.testinprod.popularmovies.models;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -171,6 +172,19 @@ public class VideoModel {
         values.put(MovieContract.VideoEntry.COLUMN_KEY, getKey());
         values.put(MovieContract.VideoEntry.COLUMN_API_ID, getId());
         return values;
+    }
+
+    public Uri getVideoURI()
+    {
+        if(!site.equals("YouTube")) {
+            return null;
+        }
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("www.youtube.com")
+                .appendPath("v")
+                .appendPath(key);
+        return builder.build();
     }
 
     public static final String[] ALL_COLUMN_PROJECTION = {

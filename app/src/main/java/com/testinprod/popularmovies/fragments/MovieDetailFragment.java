@@ -2,6 +2,7 @@ package com.testinprod.popularmovies.fragments;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,11 +11,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +55,17 @@ public class MovieDetailFragment
     private static final int MOVIE_LOADER = 1;
     private static final int REVIEW_LOADER = 2;
     private static final int VIDEO_LOADER = 3;
+
+    private ImageView mBackdrop;
+    private ActionBar mBar;
+    private MovieModel mMovie;
+    private FloatingActionButton mFavButton;
+    private boolean mIsFavorite;
+    private RecyclerView mRecyclerView;
+    private MovieDetailAdapter mAdapter;
+
+    private ShareActionProvider mShareActionProvider;
+    private String mShareUrl;
 
     //<editor-fold desc="Loader Callbacks">
     @Override
@@ -111,6 +128,20 @@ public class MovieDetailFragment
                     videos.add(video);
                 }
                 mAdapter.setVideos(videos);
+                mShareUrl = null;
+                for(VideoModel video : videos)
+                {
+                    if(video.getType().equals("Trailer"))
+                    {
+                        mShareUrl = video.getVideoURI().toString();
+                        break;
+                    }
+                }
+                if(mShareUrl != null && mShareActionProvider != null)
+                {
+                    Timber.v("Share URL: " + mShareUrl);
+                    mShareActionProvider.setShareIntent(createShareVideoIntent());
+                }
                 break;
 
             case REVIEW_LOADER:
@@ -141,13 +172,7 @@ public class MovieDetailFragment
     }
     //</editor-fold>
 
-    private ImageView mBackdrop;
-    private ActionBar mBar;
-    private MovieModel mMovie;
-    private FloatingActionButton mFavButton;
-    private boolean mIsFavorite;
-    private RecyclerView mRecyclerView;
-    private MovieDetailAdapter mAdapter;
+
 
     public static MovieDetailFragment newInstance(long movieId)
     {
@@ -162,9 +187,26 @@ public class MovieDetailFragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_detail_fragment, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        mShareActionProvider =
+                (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if(mShareUrl != null && mShareActionProvider != null)
+        {
+            mShareActionProvider.setShareIntent(createShareVideoIntent());
+        }
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -182,8 +224,6 @@ public class MovieDetailFragment
                 handleFavoriteClick();
             }
         });
-
-        // TODO Launch video on click
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvMovieDetails);
         mAdapter = new MovieDetailAdapter(getContext(), null, null, null);
         mRecyclerView.setAdapter(mAdapter);
@@ -303,5 +343,13 @@ public class MovieDetailFragment
         }
     }
 
-
+    @DebugLog
+    private Intent createShareVideoIntent()
+    {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.putExtra(Intent.EXTRA_TEXT, getActivity().getString(R.string.sharing, mMovie.getTitle(), mShareUrl));
+        intent.setType("text/plain");
+        return intent;
+    }
 }

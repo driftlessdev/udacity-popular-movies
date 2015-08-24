@@ -2,7 +2,6 @@ package com.testinprod.popularmovies.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -233,9 +232,8 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             VideoModel videoModel = mVideos.get(position);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("http://www.youtube.com/v/").buildUpon().appendPath(videoModel.getKey()).build());
+            intent.setData(videoModel.getVideoURI());
             mContext.startActivity(intent);
-
         }
 
         public VideoHolder(View view)

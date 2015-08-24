@@ -25,7 +25,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         {
             long movieId = getIntent().getExtras().getLong(TheMovieDBConsts.EXTRA_MOVIE);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.clMovieDetails, MovieDetailFragment.newInstance(movieId))
+                    .add(R.id.flMovieDetails, MovieDetailFragment.newInstance(movieId))
                     .commit();
         }
     }
